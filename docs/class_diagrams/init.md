@@ -10,6 +10,7 @@ classDiagram
     Interface -- Menu
     GameScreen -- Grid
     GameScreen -- Timer
+    Grid "1" --|> "n" Cell
 ```
 
 ```mermaid
@@ -129,7 +130,7 @@ classDiagram
         +show_game_over(result: str, time: int): None
     }
     Interface -- GameScreen
-    GameScreen -- Gird
+    GameScreen -- Grid
     GameScreen -- Timer
 ```
 
@@ -192,6 +193,7 @@ classDiagram
         +flag_cell(row: int, col: int) -> Tuple[bool, bool]
         +check_game_status() -> str
     }
+    Grid "1" --|> "n" Cell
 ```
 
 Member variables:
@@ -231,6 +233,7 @@ classDiagram
         +is_flagged() -> bool
         +contains_mine() -> bool
     }
+    Grid "1" --|> "n" Cell
 ```
 
 Member variables:
@@ -248,8 +251,6 @@ Member functions:
 - `is_opened() -> bool`: Returns whether the cell is opened or not.
 - `is_flagged() -> bool`: Returns whether the cell is flagged or not.
 - `contains_mine() -> bool`: Returns whether the cell contains a mine or not.
-
-Now you can update the `Grid` class diagram to use the `Cell` class for the `cells` member variable.
 
 
 ---
@@ -283,33 +284,6 @@ Member functions:
 
 
 
-```mermaid
-classDiagram
-    class ScoreBoard {
-        -statistics: Dict[str, Dict[str, int]]
-        -high_scores: Dict[str, List[Tuple[int, str]]]
-        +__init__(): None
-        +get_statistics(): Dict[str, Dict[str, int]]
-        +update_statistics(difficulty: str, won: bool): None
-        +get_high_scores(): Dict[str, List[Tuple[int, str]]]
-        +update_high_scores(difficulty: str, time: int, timestamp: str): None
-        +save_data(): None
-        +load_data(): None
-    }
-```
-
-Member variables:
-- `statistics`: A dictionary containing the game statistics for each difficulty level (keys: "beginner", "intermediate", "advanced"). Each value is another dictionary containing keys "games_played", "games_won", and "win_percentage".
-- `high_scores`: A dictionary containing the high scores for each difficulty level (keys: "beginner", "intermediate", "advanced"). Each value is a list of tuples, where each tuple contains the high score (elapsed time) as an integer and the timestamp as a string (e.g., {"beginner": [(29, "2023/1/2"), (30, "2023/1/5"), (44, "2023/1/2")]}).
-
-Member functions:
-- `__init__()`: Initializes the ScoreBoard object, setting default values for the statistics and high_scores dictionaries.
-- `get_statistics()`: Returns the statistics dictionary.
-- `update_statistics(difficulty: str, won: bool)`: Updates the game statistics for the given difficulty level, incrementing the games_played count and, if the game was won, incrementing the games_won count and recalculating the win_percentage.
-- `get_high_scores()`: Returns the high_scores dictionary.
-- `update_high_scores(difficulty: str, time: int, timestamp: str)`: Updates the high scores data for the given difficulty level. If the new score is one of the top scores, it will be added to the list in the correct position, and the lowest score will be removed if the list exceeds the maximum number of stored scores (e.g., 10).
-- `save_data()`: Saves the statistics and high_scores data to a file on disk.
-- `load_data()`: Loads the statistics and high_scores data from a file on disk, if it exists. If the file does not exist, it initializes the data with default values.
 
 
 ---

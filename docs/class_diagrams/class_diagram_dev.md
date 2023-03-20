@@ -1,5 +1,24 @@
 ```mermaid
 classDiagram
+    class Timer {
+        +start_time: float
+        +__init__(): None
+        +start_timer(): None
+        +get_elapsed_time(): float
+    }
+```
+
+| name            | type                              | description                                              |
+| --------------- | --------------------------------- | -------------------------------------------------------- |
+| \_\_init\_\_        | instance method, public, None     | Initializes a Timer object with start_time set to 0.0    |
+| start_timer     | instance method, public, None     | Starts the timer by setting start_time to the current time |
+| get_elapsed_time| instance method, public, float    | Returns the elapsed time since start_timer was called   |
+| start_time      | instance attribute, private, float| Stores the start time of the timer                      |
+
+
+
+```mermaid
+classDiagram
     class ScoreBoard {
         -_save_data_file: str
         -statistics: Dict[str, Dict[str, int]]
@@ -14,19 +33,20 @@ classDiagram
         +load_data(): None
     }
 ```
-| name                    | type                                              | description                                                                                           |
-|-------------------------|---------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| \_\_init\_\_                | public instance method (None)                      | Initializes the ScoreBoard object, setting default values for the statistics and high_scores.         |
-| get_statistics          | public instance method (Dict[str, int])            | Returns the statistics dictionary for a given difficulty level.                                       |
-| update_statistics       | public instance method (None)                      | Updates the game statistics for the given difficulty level.                                           |
-| get_high_scores         | public instance method (List[Tuple[int, str]])     | Returns the high_scores dictionary for a given difficulty level.                                      |
-| update_high_scores      | public instance method (None)                      | Updates the high scores data for the given difficulty level.                                         |
-| _save_data_file         | private instance attribute (str)                  | The filename of the save file that stores the statistics and high_scores data.                        |
-| _statistics             | private instance attribute (Dict[str, Dict[str, int]]) | A dictionary containing game statistics for each difficulty level.                                    |
-| _high_scores            | private instance attribute (Dict[str, List[Tuple[int, str]]]) | A dictionary containing the high scores for each difficulty level.                                    |
-| _check_difficulty       | private instance method (None)                     | A helper function to check if the input difficulty is valid.                                          |
-| _save_data              | private instance method (None)                     | Saves the statistics and high_scores data to a file on disk.                                          |
-| _load_data              | private instance method (None)                     | Loads the statistics and high_scores data from a file on disk, or initializes the data if not found.  |
+| name             | type                                         | description                                              |
+| ---------------- | -------------------------------------------- | -------------------------------------------------------- |
+| \_\_init\_\_         | instance method, public, None                | Initializes a ScoreBoard object with default values     |
+| get_statistics   | instance method, public, Dict[str, int]      | Returns the statistics for the given difficulty         |
+| update_statistics| instance method, public, None                | Updates the statistics for the given difficulty         |
+| get_high_scores  | instance method, public, List[Tuple[int, str]]| Returns the high scores for the given difficulty       |
+| update_high_scores| instance method, public, None               | Updates the high scores for the given difficulty        |
+| _save_data       | instance method, private, None               | Saves the statistics and high scores to a JSON file     |
+| _load_data       | instance method, private, None               | Loads the statistics and high scores from a JSON file   |
+| _check_difficulty| instance method, private, None               | Checks if the given difficulty is valid                 |
+| _save_data_file  | instance attribute, private, str             | Stores the path to the save data file                   |
+| _statistics      | instance attribute, private, Dict[str, Dict[str, int]]| Stores the statistics for each difficulty          |
+| _high_scores     | instance attribute, private, Dict[str, List[Tuple[int, str]]]| Stores the high scores for each difficulty  |
+
 
 ### Grid class description
 ```mermaid
@@ -49,25 +69,23 @@ classDiagram
         +__str__(): str
     }
 ```
-
-| Name                   | Type                 | Description                                                  |
-|------------------------|----------------------|--------------------------------------------------------------|
-| rows                   | int                  | Number of rows in the grid.                                  |
-| cols                   | int                  | Number of columns in the grid.                               |
-| mines                  | int                  | Number of mines to be placed in the grid.                   |
-| cells                  | List[List[Cell]]     | A 2D list representing the grid with instances of `Cell`.    |
-| mine_opened            | bool                 | Whether a mine has been opened or not.                       |
-| __init__()             | constructor          | Initializes the grid with rows, columns, and mines.         |
-| in_bounds()            | private method       | Checks if a cell's row and column are within grid bounds.    |
-| initialize_grid()      | method               | Initializes the grid by placing mines and calculating adjacent mines. |
-| place_mines()          | private method       | Places mines in the grid, excluding the first clicked cell.  |
-| calculate_adjacent_mines() | private method    | Calculates the number of adjacent mines for each cell.       |
-| open_cell()            | method               | Opens a cell and returns a boolean indicating if a mine was opened and a list of opened cells. |
-| flag_cell()            | method               | Toggles the flag on a cell and returns its flagged state.    |
-| check_game_status()    | method               | Checks the game status and returns "won", "lost", or "ongoing". |
-| print_opened_cells()   | method               | Prints a visual representation of the opened cells in the grid. |
-| __str__()              | special method       | Returns a string representation of the grid with mines and adjacent mine counts. |
-
+| name                 | type                              | description                                                  |
+| -------------------- | --------------------------------- | ------------------------------------------------------------ |
+| \_\_init\_\_             | instance method, public, None     | Initializes a Grid object with rows, cols, and mines         |
+| initialize_grid      | instance method, public, None     | Initializes the grid with mines and adjacent mines after the first click |
+| open_cell            | instance method, public, Tuple[bool, List[Tuple[int, int]]] | Opens a cell and returns whether it's a mine and a list of opened cells |
+| flag_cell            | instance method, public, bool     | Toggles the flag status of a cell and returns the new flag state |
+| check_game_status    | instance method, public, str      | Checks the game status and returns "lost", "won", or "ongoing" |
+| print_opened_cells   | instance method, public, None     | Prints the opened cells in the grid                           |
+| \_\_str\_\_              | instance method, public, str      | Returns a string representation of the grid                   |
+| rows                 | instance attribute, private, int  | Number of rows in the grid                                   |
+| cols                 | instance attribute, private, int  | Number of columns in the grid                                |
+| mines                | instance attribute, private, int  | Number of mines in the grid                                  |
+| cells                | instance attribute, private, List[List[Cell]] | 2D list of Cell objects representing the grid                |
+| mine_opened          | instance attribute, private, bool | Flag indicating if a mine has been opened                    |
+| in_bounds            | instance method, private, bool    | Checks if the given row and col are within the grid bounds   |
+| place_mines          | instance method, private, None    | Places mines on the grid, excluding the cell specified       |
+| calculate_adjacent_mines | instance method, private, None | Calculates the number of adjacent mines for each cell        |
 
 
 ---
@@ -91,19 +109,20 @@ classDiagram
     }
 ```
 
-| Property / Function | Description |
-|---------------------|-------------|
-| `_is_mine`          | A boolean value indicating if the cell contains a mine. |
-| `_is_open`          | A boolean value indicating if the cell has been opened. |
-| `_is_flagged`       | A boolean value indicating if the cell has been flagged. |
-| `_adjacent_mines`   | An integer value representing the number of adjacent mines. |
-| `__init__(is_mine: bool)` | Constructor, initializes the Cell object with the given `is_mine` value. |
-| `open()`            | Sets the cell to the opened state. |
-| `set_adjacent_mines(adjacent_mines: int)` | Sets the number of adjacent mines. |
-| `toggle_flag()`     | Toggles the flagged state of the cell. |
-| `is_open` (property) | Returns whether the cell is opened or not. |
-| `adjacent_mines` (property) | Returns the number of adjacent mines. |
-| `flagged` (property) | Returns whether the cell is flagged or not. |
-| `is_mine` (property) | Returns whether the cell contains a mine or not. |
+| name             | type                               | description                                              |
+| ---------------- | ---------------------------------- | -------------------------------------------------------- |
+| \_\_init\_\_         | instance method, public, None      | Initializes a Cell object with default values           |
+| is_open          | property, public, bool             | Returns the value of _is_open attribute                 |
+| open             | instance method, public, None      | Sets the _is_open attribute to True                     |
+| set_adjacent_mines| instance method, public, None     | Sets the _adjacent_mines attribute to the given value   |
+| adjacent_mines   | property, public, int              | Returns the value of _adjacent_mines attribute          |
+| toggle_flag      | instance method, public, None      | Toggles the value of _is_flagged attribute              |
+| flagged          | property, public, bool             | Returns the value of _is_flagged attribute              |
+| is_mine          | property, public, bool             | Returns the value of _is_mine attribute                 |
+| put_mine         | instance method, public, None      | Sets the _is_mine attribute to True                     |
+| _is_mine         | instance attribute, private, bool  | Stores whether the cell contains a mine                 |
+| _is_open         | instance attribute, private, bool  | Stores whether the cell is open                         |
+| _is_flagged      | instance attribute, private, bool  | Stores whether the cell is flagged                      |
+| _adjacent_mines  | instance attribute, private, int   | Stores the number of adjacent mines                     |
 
 ---

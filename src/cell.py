@@ -1,6 +1,6 @@
 class Cell:
-    def __init__(self, is_mine: bool):
-        self._is_mine = is_mine
+    def __init__(self):
+        self._is_mine = False
         self._is_open = False
         self._is_flagged = False
         self._adjacent_mines = 0
@@ -29,3 +29,6 @@ class Cell:
     @property
     def is_mine(self):
         return self._is_mine
+    
+    def put_mine(self):
+        self._is_mine = True

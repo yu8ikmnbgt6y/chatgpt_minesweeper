@@ -1,5 +1,5 @@
 import pytest
-from score_board import ScoreBoard
+from scoreboard import ScoreBoard
 
 
 @pytest.fixture

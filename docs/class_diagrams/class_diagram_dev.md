@@ -16,15 +16,15 @@ classDiagram
 ```
 | name                    | type                                              | description                                                                                           |
 |-------------------------|---------------------------------------------------|-------------------------------------------------------------------------------------------------------|
-| _save_data_file         | private instance attribute (str)                  | The filename of the save file that stores the statistics and high_scores data.                        |
-| _statistics             | private instance attribute (Dict[str, Dict[str, int]]) | A dictionary containing game statistics for each difficulty level.                                    |
-| _high_scores            | private instance attribute (Dict[str, List[Tuple[int, str]]]) | A dictionary containing the high scores for each difficulty level.                                    |
 | \_\_init\_\_                | public instance method (None)                      | Initializes the ScoreBoard object, setting default values for the statistics and high_scores.         |
-| _check_difficulty       | private instance method (None)                     | A helper function to check if the input difficulty is valid.                                          |
 | get_statistics          | public instance method (Dict[str, int])            | Returns the statistics dictionary for a given difficulty level.                                       |
 | update_statistics       | public instance method (None)                      | Updates the game statistics for the given difficulty level.                                           |
 | get_high_scores         | public instance method (List[Tuple[int, str]])     | Returns the high_scores dictionary for a given difficulty level.                                      |
 | update_high_scores      | public instance method (None)                      | Updates the high scores data for the given difficulty level.                                         |
+| _save_data_file         | private instance attribute (str)                  | The filename of the save file that stores the statistics and high_scores data.                        |
+| _statistics             | private instance attribute (Dict[str, Dict[str, int]]) | A dictionary containing game statistics for each difficulty level.                                    |
+| _high_scores            | private instance attribute (Dict[str, List[Tuple[int, str]]]) | A dictionary containing the high scores for each difficulty level.                                    |
+| _check_difficulty       | private instance method (None)                     | A helper function to check if the input difficulty is valid.                                          |
 | _save_data              | private instance method (None)                     | Saves the statistics and high_scores data to a file on disk.                                          |
 | _load_data              | private instance method (None)                     | Loads the statistics and high_scores data from a file on disk, or initializes the data if not found.  |
 

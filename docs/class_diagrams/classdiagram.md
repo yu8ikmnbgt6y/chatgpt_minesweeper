@@ -119,8 +119,9 @@ classDiagram
         +grid: Grid
         +timer: Timer
         ADJACENT_MINES_COLORS: Dict[int, str]
+        DIFFICULTY_SETTINGS: Dict[str, Tuple[int, int, int]]
 
-        +__init__(interface: Interface): None
+        +__init__(interface: Interface, difficulty:str): None
         +create_ui_elements(): None
         +update_score_label(score: int): None
         +update_timer_label(time: int): None
@@ -144,9 +145,17 @@ Member variables:
 - `grid`: An instance of the Grid class, representing the minesweeper grid.
 - `timer`: An instance of the Timer class, responsible for keeping track of the game time.
 - `ADJACENT_MINES_COLORS`: A dictionary containing the colors for each number of adjacent mines. ["blue","green","red","dark blue","maroon","cyan","black","gray"]
+- `DIFFICULTY_SETTINGS`: A dictionary containing the grid size (rows, columns) and the number of mines for each difficulty level. {"defficulty":(rows, columns, mines),...}
+
+| Difficulty   | Rows | Columns | Mines |
+|--------------|------|---------|-------|
+| Beginner     | 9    | 9       | 10    |
+| Intermediate | 16   | 16      | 40    |
+| Advanced     | 16   | 30      | 99    |
+
 
 Member functions:
-- `__init__(root: tk.Tk, interface: Interface)`: The constructor method for the GameScreen class, initializing all required instances of tkinter widgets and taking a reference to the Interface class instance.
+- `__init__(interface: Interface, difficulty:str)`: The constructor method for the GameScreen class, initializing all required instances of tkinter widgets and taking a reference to the Interface class instance.
 - `create_ui_elements()`: Creates and positions all required UI elements (canvas, score_label, timer_label) within the master Toplevel widget.
 - `update_score_label(score: int)`: Updates the score_label with the current score (number of mines remaining).
 - `update_timer_label(time: int)`: Updates the timer_label with the current elapsed time.
@@ -155,7 +164,7 @@ Member functions:
 - `handle_right_click(event)`: Handles a right-click event on the canvas, calling the appropriate functions in the Grid class and updating the UI accordingly.
 - `show_game_over(result: str, time: int)`: Displays the game over screen with the appropriate result (win or loss) and the time it took to complete the game.
 
-
+---
 ```mermaid
 classDiagram
     class GameStatisticsWindow {

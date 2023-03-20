@@ -9,17 +9,15 @@ class Cell:
     def is_open(self):
         return self._is_open
 
-    @is_open.setter
     def open(self):
         self._is_open = True
+
+    def set_adjacent_mines(self, adjacent_mines: int):
+        self._adjacent_mines = adjacent_mines
 
     @property
     def adjacent_mines(self):
         return self._adjacent_mines
-
-    @adjacent_mines.setter
-    def set_adjacent_mines(self, adjacent_mines: int):
-        self._adjacent_mines = adjacent_mines
 
     def toggle_flag(self):
         self._is_flagged = not self._is_flagged

@@ -12,7 +12,7 @@ class Cell:
     def open(self):
         self._is_open = True
 
-    def set_adjacent_mines(self, adjacent_mines: int):
+    def set_adjacent_mines(self, adjacent_mines: str):
         self._adjacent_mines = adjacent_mines
 
     @property

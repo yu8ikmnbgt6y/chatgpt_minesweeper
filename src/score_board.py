@@ -2,7 +2,8 @@ import json
 from typing import Dict, List, Tuple
 
 class ScoreBoard:
-    def __init__(self):
+    def __init__(self, save_data_file: str = "save_data.json"):
+        self._save_data_file = save_data_file
         self.statistics = {
             "beginner": {"games_played": 0, "games_won": 0, "win_percentage": 0},
             "intermediate": {"games_played": 0, "games_won": 0, "win_percentage": 0},
@@ -10,6 +11,7 @@ class ScoreBoard:
         }
         self.high_scores = {"beginner": [], "intermediate": [], "advanced": []}
         self.load_data()
+
 
     def _check_difficulty(self, difficulty: str) -> None:
         if difficulty not in ["beginner", "intermediate", "advanced"]:
@@ -39,7 +41,7 @@ class ScoreBoard:
         if len(self.high_scores[difficulty]) > 10:
             self.high_scores[difficulty].pop()
 
-    def save_data(self) -> None:
+    def _save_data(self) -> None:
         data = {"statistics": self.statistics, "high_scores": self.high_scores}
         try:
             with open("save_data.json", "w") as f:
@@ -49,9 +51,9 @@ class ScoreBoard:
 
     def load_data(self) -> None:
         try:
-            with open("save_data.json", "r") as f:
+            with open(self._save_data, "r") as f:
                 data = json.load(f)
                 self.statistics = data["statistics"]
                 self.high_scores = data["high_scores"]
-        except FileNotFoundError:
+        except:
             pass

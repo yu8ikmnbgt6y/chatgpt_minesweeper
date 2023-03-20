@@ -1,5 +1,10 @@
 {
     "terminal.integrated.env.windows": {
         "PSExecutionPolicyPreference": "RemoteSigned"
-    }
+    },
+    "python.testing.pytestArgs": [
+        "test"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }

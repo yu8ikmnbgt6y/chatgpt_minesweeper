@@ -271,7 +271,7 @@ classDiagram
 
 Member variables:
 - `statistics`: A dictionary containing the game statistics for each difficulty level (keys: "beginner", "intermediate", "advanced"). Each value is another dictionary containing keys "games_played", "games_won", and "win_percentage".
-- `high_scores`: A dictionary containing the high scores for each difficulty level (keys: "beginner", "intermediate", "advanced"). Each value is a list of tuples, where each tuple contains the high score (elapsed time) as an integer and the timestamp as a string (e.g., {"beginner": [(29, "2009/1/2"), (30, "2009/1/5"), (44, "2019/1/2")]}).
+- `high_scores`: A dictionary containing the high scores for each difficulty level (keys: "beginner", "intermediate", "advanced"). Each value is a list of tuples, where each tuple contains the high score (elapsed time) as an integer and the timestamp as a string (e.g., {"beginner": [(29, "2023/1/2"), (30, "2023/1/5"), (44, "2023/1/2")]}).
 
 Member functions:
 - `__init__()`: Initializes the ScoreBoard object, setting default values for the statistics and high_scores dictionaries.
@@ -281,7 +281,6 @@ Member functions:
 - `update_high_scores(difficulty: str, time: int, timestamp: str)`: Updates the high scores data for the given difficulty level. If the new score is one of the top scores, it will be added to the list in the correct position, and the lowest score will be removed if the list exceeds the maximum number of stored scores (e.g., 10).
 - `save_data()`: Saves the statistics and high_scores data to a file on disk.
 - `load_data()`: Loads the statistics and high_scores data from a file on disk, if it exists. If the file does not exist, it initializes the data with default values.
-
 
 
 

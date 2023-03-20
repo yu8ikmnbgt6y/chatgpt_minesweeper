@@ -1,27 +1,33 @@
 class Cell:
     def __init__(self, is_mine: bool):
-        self.is_mine = is_mine
-        self.is_open = False
-        self.is_flagged = False
-        self.adjacent_mines = 0
+        self._is_mine = is_mine
+        self._is_open = False
+        self._is_flagged = False
+        self._adjacent_mines = 0
 
+    @property
+    def is_open(self):
+        return self._is_open
+
+    @is_open.setter
     def open(self):
-        self.is_open = True
+        self._is_open = True
+
+    @property
+    def adjacent_mines(self):
+        return self._adjacent_mines
+
+    @adjacent_mines.setter
+    def set_adjacent_mines(self, adjacent_mines: int):
+        self._adjacent_mines = adjacent_mines
 
     def toggle_flag(self):
-        self.is_flagged = not self.is_flagged
+        self._is_flagged = not self._is_flagged
 
-    def set_adjacent_mines(self, adjacent_mines: int):
-        self.adjacent_mines = adjacent_mines
+    @property
+    def flagged(self):
+        return self._is_flagged
 
-    def get_adjacent_mines(self) -> int:
-        return self.adjacent_mines
-
-    def is_opened(self) -> bool:
-        return self.is_open
-
-    def is_flagged(self) -> bool:
-        return self.is_flagged
-
-    def contains_mine(self) -> bool:
-        return self.is_mine
+    @property
+    def is_mine(self):
+        return self._is_mine

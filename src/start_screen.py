@@ -1,0 +1,2 @@
+class StartScreen:
+    pass

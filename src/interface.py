@@ -10,14 +10,26 @@ class Interface:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("MinesweeperGame")
-        self.root.geometry("300x300")
-
+        
         self.start_screen = None
         self.game_screen = None
         self.game_statistics_window = GameStatisticsWindow(root=self.root)
         self.scoreboard = ScoreBoard()
 
         self._create_menu()
+
+        self.root.grid()
+        # create 3x3 Grid
+        for i in range(3):
+            for j in range(3):
+                #label = tk.Label(self._root, text=f"({i},{j})", bg="lightgray", padx=10, pady=10)
+                label = tk.Label(self.root, padx=20, pady=20)
+                label.grid(row=i, column=j, sticky='nsew')
+
+        # Set weights for StartScreen
+        for i in range(3):
+            self.root.grid_rowconfigure(i, weight=1)
+            self.root.grid_columnconfigure(i, weight=1)
         self._create_start_screen()
     
    
@@ -33,13 +45,12 @@ class Interface:
 
     def _release_screens(self):
         if self.start_screen:
-            self.start_screen.grid_forget()
-            self.start_screen.destroy()
+            self.start_screen.release_ui()
             self.start_screen = None
-        if self.game_screen:
-            self.game_screen.grid_forget()
-            self.game_screen.destroy()
-            self.game_screen = None
+        # if self.game_screen:
+        #     self.game_screen.grid_forget()
+        #     self.game_screen.destroy()
+        #     self.game_screen = None
     
     def _create_start_screen(self):
         self._release_screens()
@@ -53,12 +64,13 @@ class Interface:
     def _show_statistics(self):
         self.game_statistics_window.show_statistics(self.scoreboard)
 
-    def start(self):
-        self.start_screen.grid()
-        self.root.mainloop()
+    def start(self):       
+        if self.start_screen:
+            self.root.mainloop()
 
 
 
 ##-----test
 app = Interface()
 app.start()
+# app.root.mainloop()

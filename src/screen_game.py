@@ -10,7 +10,7 @@ CELL_COLOR_BASE = "gray"
 CELL_COLOR_OPEND = "white"
 CELL_COLOR_MINE = "black"
 
-class GameScreen(tk.Frame):
+class GameScreen():
     ADJACENT_MINES_COLORS = {1: "blue", 2: "green", 3: "red", 4: "dark blue",
                               5: "maroon", 6: "cyan", 7: "black", 8: "gray"}
 
@@ -21,12 +21,15 @@ class GameScreen(tk.Frame):
     }
 
     def __init__(self, root, difficulty: str, create_start_callback):
-        super().__init__(root)
-        self.root = root
+        self.root: tk.Tk = root
+
+        self.frame_top = tk.Frame()
+        self.score_label = tk.Label(self.frame_top)
+        self.flagged_label = tk.Label(self.frame_top)
+        self.timer_label = tk.Label(self.frame_top)
+
+
         self.canvas = tk.Canvas(self.root)
-        self.score_label = tk.Label(self.root)
-        self.flagged_label = tk.Label(self.root)
-        self.timer_label = tk.Label(self.root)
         self.timer = Timer()
 
         rows, cols, mines = self.DIFFICULTY_SETTINGS[difficulty]
@@ -40,28 +43,35 @@ class GameScreen(tk.Frame):
         self._create_ui_elements()
 
     def _create_ui_elements(self):
+        # Information
+        self.score_label.pack(side=tk.LEFT, padx=10)
+        self.flagged_label.pack(sid=tk.LEFT, padx=10)
+        self.timer_label.pack(side=tk.LEFT, padx=10)
+        self.frame_top.grid(column=0, row=0)
 
-        self.canvas.config(width=self.minesweeper_grid.grid_width, height=self.minesweeper_grid.grid_height)
-
-        self.canvas.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+        # Minesweeper Grid
         self.canvas.bind("<Button-1>", self.handle_left_click)
         self.canvas.bind("<Button-3>", self.handle_right_click)
+        self.canvas.config(width=self.minesweeper_grid.grid_width, height=self.minesweeper_grid.grid_height)
+        self.canvas.grid(column=0, row=1, padx=10, pady=10)
 
-        self.score_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        self.flagged_label.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-        self.timer_label.grid(row=0, column=2, padx=10, pady=5, sticky="e")
         self.initialize_grid_view()
         self._update_screen()
 
-    def _clear_ui_elements(self):
+    def release_ui(self):
+        # Information
+        self.score_label.pack_forget()
+        self.flagged_label.pack_forget()
+        self.timer_label.pack_forget()
+        self.frame_top.grid_forget()
+
         self.canvas.unbind("<Button-1>")
         self.canvas.unbind("<Button-3>")
+        self.canvas.config()
         self.canvas.grid_forget()
-        self.score_label.grid_forget()
-        self.flagged_label.grid_forget()
-        self.timer_label.grid_forget()
 
-    def initialize_grid_view(self):        
+
+    def initialize_grid_view(self):
         for row in range(self.minesweeper_grid.n_rows):
             for col in range(self.minesweeper_grid.n_cols):
                 cell = self.minesweeper_grid.cells[row][col]
@@ -181,5 +191,5 @@ class GameScreen(tk.Frame):
     def close_popup(self, popup):
         popup.destroy()
         self._popup_displayed = False
-        self._clear_ui_elements()
+        self.release_ui()
         self._return_start_callback()

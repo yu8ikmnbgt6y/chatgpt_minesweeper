@@ -1,3 +1,37 @@
+
+
+```mermaid
+classDiagram
+    class StartScreen {
+        -root: tk.Tk
+        -_initialize_game_callback: Callable
+        -_title_label: tk.Label
+        -_difficulty_var: tk.StringVar
+        -_difficulty_menu: ttk.Combobox
+        -_start_button: tk.Button
+
+        +__init__(root: tk.Tk, initialize_game_callback: Callable): None
+        -_setup_ui(): None
+        -_start_game(): None
+    }
+    Interface -- StartScreen
+```
+
+| name                      | type                                              | description                                                                                       |
+|---------------------------|---------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| `__init__(root, initialize_game_callback)` | instance method, public, None                  | Constructor, initializes the StartScreen object with a reference to the tkinter root and a callback function. |
+| `_initialize_game_callback` | instance attribute, private                      | A callback function to initialize a new game with the selected difficulty level.                   |
+| `_setup_ui()`              | instance method, private, None                    | Sets up the UI elements for the StartScreen, such as the title, difficulty selection, and start button. |
+| `_title_label`             | instance attribute, private, `tk.Label`            | The label displaying the title of the game.                                                       |
+| `_difficulty_var`          | instance attribute, private, `tk.StringVar`        | A Tkinter StringVar for storing the current difficulty level selected.                            |
+| `_difficulty_menu`         | instance attribute, private, `ttk.Combobox`        | A Tkinter ttk.Combobox for selecting the difficulty level.                                       |
+| `_start_button`            | instance attribute, private, `tk.Button`           | A Tkinter button for starting the game. When this button is pushed, selected difficulty is passed to the callback function. |
+| `_start_game()`            | instance method, private, None                    | Callback function for the start button; starts the game with the selected difficulty level and switches to the game screen. |
+
+
+
+
+
 ```mermaid
 classDiagram
     class Timer {

@@ -9,6 +9,7 @@ from scoreboard import ScoreBoard
 class Interface:
     def __init__(self):
         self.root = tk.Tk()
+        self.root.title("MinesweeperGame")
         self.root.geometry("300x300")
         self.start_screen = StartScreen(root=self.root, initialize_game_callback=self.initialize_game)
         # self.game_screen = GameScreen(root=self.root)

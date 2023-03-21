@@ -11,16 +11,29 @@ class Interface:
         self.root = tk.Tk()
         self.root.title("MinesweeperGame")
         self.root.geometry("300x300")
-        self.start_screen = StartScreen(root=self.root, initialize_game_callback=self.initialize_game)
+        self.start_screen = StartScreen(root=self.root, initialize_game_callback=self._initialize_game)
         # self.game_screen = GameScreen(root=self.root)
         # self.game_statistics_window = GameStatisticsWindow(root=self.root)
-        # self.menu = Menu(root=self.root)
+
+        callback_method_dict = {
+            "difficulty": self._initialize_game,
+            "statistics": self._show_statistics,
+            "exit": self.root.quit
+        }    
+        self.menu = Menu(root=self.root, callback_method_dict=callback_method_dict)
+        menu_bar = self.menu.create_menu()
+        self.root.config(menu=menu_bar)
         self.scoreboard = ScoreBoard()
 
-    def initialize_game(self, difficulty: str):
-        print("START_GAME")
+    def _initialize_game(self, difficulty: str):
+        print(f"START_GAME: with difficulty {difficulty}")
         print("Not Implemented")
         #self.game_screen = GameScreen(difficulty)
+    
+    def _show_statistics(self):
+        print("create Stats window")
+        print("Not Implemented")
+
 
     def start(self):
         self.start_screen.pack()

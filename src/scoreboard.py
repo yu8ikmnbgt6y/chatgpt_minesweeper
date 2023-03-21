@@ -5,9 +5,9 @@ class ScoreBoard:
     def __init__(self, save_data_file: str = "save_data.json"):
         self._save_data_file = save_data_file
         self._statistics = {
-            "beginner": {"games_played": 0, "games_won": 0, "win_percentage": 0},
-            "intermediate": {"games_played": 0, "games_won": 0, "win_percentage": 0},
-            "advanced": {"games_played": 0, "games_won": 0, "win_percentage": 0},
+            "beginner": {"games_played": 0, "games_won": 0},
+            "intermediate": {"games_played": 0, "games_won": 0},
+            "advanced": {"games_played": 0, "games_won": 0},
         }
         self._high_scores = {"beginner": [], "intermediate": [], "advanced": []}
         self._load_data()
@@ -26,9 +26,6 @@ class ScoreBoard:
         self._statistics[difficulty]["games_played"] += 1
         if won:
             self._statistics[difficulty]["games_won"] += 1
-        self._statistics[difficulty]["win_percentage"] = int(
-            self._statistics[difficulty]["games_won"] / self._statistics[difficulty]["games_played"] * 100
-        )
 
     def get_high_scores(self, difficulty: str) -> List[Tuple[int, str]]:
         self._check_difficulty(difficulty)

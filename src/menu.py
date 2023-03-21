@@ -14,9 +14,9 @@ class Menu:
 
     def _create_difficulty_menu(self, menu):
         difficulty_menu = tk.Menu(menu, tearoff=0)
-        difficulty_menu.add_command(label="Beginner", command=lambda: self._callback_method_dict["difficulty"]("beginner"))
-        difficulty_menu.add_command(label="Intermediate", command=lambda: self._callback_method_dict["difficulty"]("intermediate"))
-        difficulty_menu.add_command(label="Advanced", command=lambda: self._callback_method_dict["difficulty"]("advanced"))
+        difficulty_menu.add_command(label="beginner", command=lambda: self._callback_method_dict["difficulty"]("beginner"))
+        difficulty_menu.add_command(label="intermediate", command=lambda: self._callback_method_dict["difficulty"]("intermediate"))
+        difficulty_menu.add_command(label="advanced", command=lambda: self._callback_method_dict["difficulty"]("advanced"))
         menu.add_cascade(label="Difficulty", menu=difficulty_menu)
 
     def _create_game_statistics_menu(self, menu):

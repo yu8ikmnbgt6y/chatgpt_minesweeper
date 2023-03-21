@@ -51,7 +51,7 @@ class ScoreBoard:
 
     def _load_data(self) -> None:
         try:
-            with open(self._save_data, "r") as f:
+            with open(self._save_data_file, "r") as f:
                 data = json.load(f)
                 self._statistics = data["statistics"]
                 self._high_scores = data["high_scores"]

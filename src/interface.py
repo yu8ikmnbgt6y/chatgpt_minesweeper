@@ -13,7 +13,7 @@ class Interface:
         self.root.geometry("300x300")
         self.start_screen = StartScreen(root=self.root, initialize_game_callback=self._initialize_game)
         # self.game_screen = GameScreen(root=self.root)
-        # self.game_statistics_window = GameStatisticsWindow(root=self.root)
+        self.game_statistics_window = GameStatisticsWindow(root=self.root)
 
         callback_method_dict = {
             "difficulty": self._initialize_game,
@@ -31,8 +31,7 @@ class Interface:
         #self.game_screen = GameScreen(difficulty)
     
     def _show_statistics(self):
-        print("create Stats window")
-        print("Not Implemented")
+        self.game_statistics_window.show_statistics(self.scoreboard)
 
 
     def start(self):

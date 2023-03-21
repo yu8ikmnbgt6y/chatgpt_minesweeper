@@ -1,9 +1,33 @@
 class Cell:
-    def __init__(self):
+    def __init__(self, row: int, col: int, cell_size: int):
+        self._row = row
+        self._col = col
+        self._cell_size = cell_size
+        self._x1 = col * cell_size
+        self._y1 = row * cell_size
+        self._x2 = self._x1 + cell_size
+        self._y2 = self._y1 + cell_size
+
         self._is_mine = False
         self._is_open = False
         self._is_flagged = False
         self._adjacent_mines = 0
+
+    @property
+    def x1(self):
+        return self._x1
+
+    @property
+    def x2(self):
+        return self._x2
+
+    @property
+    def y1(self):
+        return self._y1
+
+    @property
+    def y2(self):
+        return self._y2
 
     @property
     def is_open(self):
@@ -29,6 +53,6 @@ class Cell:
     @property
     def is_mine(self):
         return self._is_mine
-    
+
     def put_mine(self):
         self._is_mine = True

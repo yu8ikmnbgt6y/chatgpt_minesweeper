@@ -1,15 +1,15 @@
 import pytest
-from grid import Grid
+from minesweeper_grid import MinesweeperGrid
 
 
 @pytest.fixture
 def empty_grid():
-    return Grid(4, 4, 0)
+    return MinesweeperGrid(4, 4, 0)
 
 
 @pytest.fixture
 def grid_with_mines():
-    grid = Grid(4, 4, 4)
+    grid = MinesweeperGrid(4, 4, 4)
     grid.initialize_grid(0, 0)
     return grid
 

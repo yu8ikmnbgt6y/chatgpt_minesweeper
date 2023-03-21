@@ -12,6 +12,14 @@ class Cell:
         self._is_open = False
         self._is_flagged = False
         self._adjacent_mines = 0
+    
+    @property
+    def center_x(self):
+        return (self.x1 + self.x2) / 2
+    
+    @property
+    def center_y(self):
+        return (self.y1 + self.y2) / 2
 
     @property
     def x1(self):
@@ -47,7 +55,7 @@ class Cell:
         self._is_flagged = not self._is_flagged
 
     @property
-    def flagged(self):
+    def is_flagged(self):
         return self._is_flagged
 
     @property

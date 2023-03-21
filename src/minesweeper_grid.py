@@ -137,7 +137,7 @@ class MinesweeperGrid:
                 row_representation = []
                 for col in range(self.n_cols):
                     if self.cells[row][col].is_mine:
-                        row_representation.append('X')
+                        row_representation.append('M')
                     else:
                         row_representation.append(str(self.cells[row][col].adjacent_mines))
                 grid_representation.append(''.join(row_representation))

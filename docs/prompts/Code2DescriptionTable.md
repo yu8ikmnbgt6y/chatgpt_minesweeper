@@ -21,16 +21,17 @@ The description of each item is as follows
 	When the Method is decorated as @staticmethod add "/static" after the "Method".
 * "DataType":
   * DataType of the member.
-  * what Datatype is return, when the member is called.
-  * when the member is method or property, this item means return DataType
-  * When the member is variable, this item means Variable DataType.
+  * Describe what Datatype is returned when the member is called.
+  * If the member is a method or property, this item means the return value's DataType.
+  * If the member is a variable, this item means the member's own DataType.
 * "Description":
   * Description of the member.
-  * length of this items differ from the , If the member is important, make description longer up to 8 sentences.
-  * When the member is not important, make description shorter. One sentence is acceptable.
+  * The length of this item depends on the importance of the member.
+  * If the member is of high importance, the description should be longer, up to 8 sentences.
+  * IF the member is not important, make description shorter. One sentence is acceptable.
 
 Ensure that the table is ordered according to these two priorities:
-	1. Members whose "Access" is "Public" must appear above "Private" members.
+	1. Members whose 'access' is 'public' must appear above those whose access is 'private'.
 	2. Members should be listed in the same order as they appear in the source code unless the above conditions are violated.
 
 

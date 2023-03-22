@@ -20,8 +20,8 @@ class GameScreen():
                               5: "maroon", 6: "cyan", 7: "black", 8: "gray"}
 
     DIFFICULTY_SETTINGS = {
-        #"beginner": (9, 9, 10),
-        "beginner": (4, 4, 2),
+        "beginner": (9, 9, 10),
+        # "beginner": (4, 4, 2),
         "intermediate": (16, 16, 40),
         "advanced": (16, 30, 99)
     }

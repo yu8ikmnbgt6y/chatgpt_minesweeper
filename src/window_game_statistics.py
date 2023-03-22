@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from typing import List
-from scoreboard import ScoreBoard, DIFFICULTIES, HighScore
+from scoreboard import ScoreBoard, DIFFICULTIES, HighScore, MAX_HIGH_SCORE_ROW
 
 class GameStatisticsWindow:
     def __init__(self, root):
@@ -13,8 +13,8 @@ class GameStatisticsWindow:
             self._statistics_window.destroy()
 
         self._statistics_window = tk.Toplevel(self._root)
-        self._statistics_window.geometry("1000x800")
         self._statistics_window.title("Game Statistics")
+        self._statistics_window.resizable(False, False)
 
         # DIFFICULTY LABELS
         for i, level in enumerate(DIFFICULTIES):
@@ -24,16 +24,16 @@ class GameStatisticsWindow:
         # HIGH SCORE TABLES
         for i, level in enumerate(DIFFICULTIES):
             tree = ttk.Treeview(self._statistics_window, columns=("Rank", "Time", "Date"), show="headings")
-            tree.column("Rank", width=40)
-            tree.column("Time", width=80)
-            tree.column("Date", width=150)
+            tree.column("Rank", width=40, anchor="center")
+            tree.column("Time", width=80, anchor="center")
+            tree.column("Date", width=150, anchor="center")
             tree.heading("Rank", text="Rank")
-            tree.heading("Time", text="Time (seconds)")
+            tree.heading("Time", text="Time(sec)")
             tree.heading("Date", text="Date")
             tree.grid(row=1, column=i, padx=10, pady=5)
 
             scores: List[HighScore] = scoreboard.get_high_scores(difficulty=level)
-            for high_score in scores:
+            for high_score in scores[:MAX_HIGH_SCORE_ROW]:
                 rank = high_score.rank
                 clear_time = high_score.clear_time
                 clear_date = high_score.clear_date
@@ -56,3 +56,7 @@ class GameStatisticsWindow:
 
             win_rate_label = tk.Label(frame, text=f"win_rate: {win_rate:.2f}%")
             win_rate_label.pack(side="top", padx=10, pady=5)
+
+        self._statistics_window.update_idletasks()
+        width, height = self._statistics_window.winfo_reqwidth(), self._statistics_window.winfo_reqheight()
+        self._statistics_window.geometry(f"{width}x{height}")

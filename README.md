@@ -1,5 +1,5 @@
-# chatgpt4_minesweepr
-this minesweeper application was developped with chatgpt4
+# chatgpt_minesweeper
+this minesweeper application was developed with chatgpt4
 
 command to launch this app
 ```

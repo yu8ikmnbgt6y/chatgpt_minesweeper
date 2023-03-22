@@ -8,6 +8,7 @@ from collections import namedtuple, defaultdict
 HighScore = namedtuple("HighScore", ["rank", "clear_time", "clear_date"])
 DIFFICULTIES = ("beginner", "intermediate", "advanced")
 DEFAULT_SAVE_FILE = "save_data.json"
+MAX_HIGH_SCORE_ROW = 10
 
 class ScoreBoard:
     def __init__(self, save_data_file: str = "save_data.json"):
@@ -46,7 +47,7 @@ class ScoreBoard:
         for index, high_score in enumerate(self._high_scores[difficulty], start=1):
             self._high_scores[difficulty][index-1] = high_score._replace(rank=index)
 
-        if len(self._high_scores[difficulty]) > 10:
+        if len(self._high_scores[difficulty]) > MAX_HIGH_SCORE_ROW:
             self._high_scores[difficulty].pop()
         self._save_data()
         
@@ -71,8 +72,9 @@ class ScoreBoard:
 
                 for difficulty in DIFFICULTIES:
                     for row in highscores[difficulty]:
-                        _high_score = HighScore(**row)
+                        _high_score = HighScore(*row)
                         self._high_scores[difficulty].append(_high_score)
-        except:
-            pass
+                pass
+        except Exception as e:
+            print(e)
         return

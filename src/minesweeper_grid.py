@@ -3,6 +3,16 @@ from collections import deque
 from typing import List, Tuple
 from cell import Cell
 
+class TooManyFlagsError(Exception):
+    def __init__(self, message="", extra_info=None):
+        super().__init__(message)
+        self.extra_info = extra_info
+class UnavailableCellError(Exception):
+    def __init__(self, message="", extra_info=None):
+        super().__init__(message)
+        self.extra_info = extra_info
+
+
 CELL_SIZE = 20 # pixel
 
 class MinesweeperGrid:
@@ -12,7 +22,6 @@ class MinesweeperGrid:
         self.n_mines = mines
         self.cell_pixel_size = CELL_SIZE
         self.cells = [[Cell(row=row, col=col, cell_size=self.cell_pixel_size) for col in range(cols)] for row in range(rows)]
-        self.mine_opened = False
         self.initialized = False
     
     @property
@@ -66,16 +75,16 @@ class MinesweeperGrid:
 
     def open_cell(self, row: int, col: int) -> Tuple[bool, List[Cell]]:
         cell = self.cells[row][col]
-
-        if cell.is_mine:
-            print("*****is_mine*****")
-            self.mine_opened = True # Game Over
-            return True, []
-
         cell.open()
         opened_cells = [cell]
-        queue = deque([cell])
+        mine_hit = False
 
+        if cell.is_mine:
+            mine_hit = True
+            return mine_hit, opened_cells
+
+        queue = deque([cell])
+        
         directions = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
         while queue:
@@ -95,24 +104,37 @@ class MinesweeperGrid:
                         if this_cell.adjacent_mines == 0 and this_cell not in queue:
                             queue.append(this_cell)
 
-        return False, opened_cells
+        return mine_hit, opened_cells
 
     def flag_cell(self, row: int, col: int) -> Cell:
-            cell = self.cells[row][col]
-            cell.toggle_flag()
-            return cell
+        cell = self.cells[row][col]
+        if cell.is_open:
+            raise UnavailableCellError('Cell already opened')
+        if self.n_flagged >= self.n_mines and not cell.is_flagged:
+            # Raise error if setting more mines than allowed. No error when toggling flagged cells.
+            raise TooManyFlagsError('Too many flags')
+        cell.toggle_flag()
+        return cell
 
     def check_game_status(self) -> str:
-            if self.mine_opened:
-                return "lost"
-            
-            for row in range(self.n_rows):
-                for col in range(self.n_cols):
-                    cell = self.cells[row][col]
-                    if not cell.is_mine and not cell.is_open:
-                        return "ongoing"
 
+        any_mine_cell_opened = any(
+            cell.is_open for row in self.cells for cell in row if cell.is_mine
+        )
+        if any_mine_cell_opened:
+            return "lost"
+
+        all_non_mine_cells_opened = all(
+            cell.is_open for row in self.cells for cell in row if not cell.is_mine
+        )
+        all_mine_cells_flagged = all(
+            cell.is_flagged for row in self.cells for cell in row if cell.is_mine
+        )
+
+        if all_non_mine_cells_opened and all_mine_cells_flagged:
             return "won"
+
+        return "ongoing"
     
     def print_opened_cells(self):
         grid_representation = ""

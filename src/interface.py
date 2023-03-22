@@ -19,11 +19,11 @@ class Interface:
         self._create_menu()
 
         self.root.grid()
-        # create 3x3 Grid
+        # create 4x3 Grid
         for i in range(3):
-            for j in range(3):
+            for j in range(4):
                 #label = tk.Label(self._root, text=f"({i},{j})", bg="lightgray", padx=10, pady=10)
-                label = tk.Label(self.root, padx=20, pady=20)
+                label = tk.Label(self.root)
                 label.grid(row=i, column=j, sticky='nsew')
 
         # Set weights for StartScreen
@@ -47,10 +47,10 @@ class Interface:
         if self.start_screen:
             self.start_screen.release_ui()
             self.start_screen = None
-        # if self.game_screen:
-        #     self.game_screen.grid_forget()
-        #     self.game_screen.destroy()
-        #     self.game_screen = None
+        if self.game_screen:
+            self.game_screen.release_ui()
+            # self.game_screen.destroy()
+            self.game_screen = None
     
     def _create_start_screen(self):
         self._release_screens()

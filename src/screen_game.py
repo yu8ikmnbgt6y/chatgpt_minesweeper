@@ -131,12 +131,12 @@ class GameScreen():
 
 
     def handle_left_click(self, event):
-        print("left button clicked")
+        #print("left button clicked")
         if not self._on_game:
             return
         in_range, row, col = self._safe_get_clicked_cell(event)
         if not in_range:
-            print("out of range")
+            #print("out of range")
             return
         
         # First Click
@@ -147,11 +147,11 @@ class GameScreen():
 
         cell: Cell = self.minesweeper_grid.cells[row][col]
         if cell.is_flagged or cell.is_open:  # if the cell has been already flagged or opened, do nothing.
-            print("skip")
+            #print("skip")
             return
         
-        print(f"grid {row}, {col}")
-        print(self.minesweeper_grid)
+        #print(f"grid {row}, {col}")
+        #print(self.minesweeper_grid)
        
         mine_hit, opened_cells = self.minesweeper_grid.open_cell(row, col)
 
@@ -171,18 +171,18 @@ class GameScreen():
             self.root.after(1000, self.update_timer)
 
     def handle_right_click(self, event):
-        print("right button clicked")
+        #print("right button clicked")
         if not self._on_game:
             return
         in_range, row, col = self._safe_get_clicked_cell(event)
         if not in_range:
             return
-        print(f"grid {row}, {col}")
+        #print(f"grid {row}, {col}")
 
         try:
             cell = self.minesweeper_grid.flag_cell(row=row, col=col)
         except TooManyFlagsError:
-            print("over flagged")
+            #print("over flagged")
             x, y = self.root.winfo_x(), self.root.winfo_y()
 
             dialog = tk.Toplevel(self.root)
@@ -204,7 +204,7 @@ class GameScreen():
             ok_button.pack(pady=(0,20))
             return
         except UnavailableCellError as e:
-            print(e)
+            #print(e)
             return
 
         self.draw_cell(cell=cell)

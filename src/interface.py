@@ -69,8 +69,6 @@ class Interface:
             self.root.mainloop()
 
 
-
-##-----test
-app = Interface()
-app.start()
-# app.root.mainloop()
+if __name__ == "__main__":
+    app = Interface()
+    app.start()

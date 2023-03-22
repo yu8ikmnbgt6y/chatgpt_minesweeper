@@ -13,7 +13,7 @@ MAX_HIGH_SCORE_ROW = 10
 class ScoreBoard:
     def __init__(self, save_data_file: str = "save_data.json"):
         self._save_data_file = save_data_file
-        self._statistics = {}
+        self._statistics = defaultdict(lambda: defaultdict(int))
         self._high_scores = defaultdict(list)
         self._load_data()
 
@@ -76,5 +76,8 @@ class ScoreBoard:
                         self._high_scores[difficulty].append(_high_score)
                 pass
         except Exception as e:
-            print(e)
+            # print(e)
+            # set default values
+            self._statistics = defaultdict(lambda: defaultdict(int))
+            self._high_scores = defaultdict(list)
         return

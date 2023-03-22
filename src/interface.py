@@ -59,7 +59,7 @@ class Interface:
 
     def _create_game_screen(self, difficulty: str):
         self._release_screens()
-        self.game_screen = GameScreen(root=self.root, difficulty=difficulty, create_start_callback=self._create_start_screen)
+        self.game_screen = GameScreen(root=self.root, difficulty=difficulty, scoreboard=self.scoreboard)
 
     def _show_statistics(self):
         self.game_statistics_window.show_statistics(self.scoreboard)

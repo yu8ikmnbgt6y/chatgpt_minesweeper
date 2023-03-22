@@ -1,10 +1,11 @@
+from datetime import datetime
 import tkinter as tk
-import tkinter.messagebox as messagebox
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Callable
 from datetime import timedelta
 from minesweeper_grid import MinesweeperGrid, TooManyFlagsError, UnavailableCellError
 from timer import Timer
 from cell import Cell
+from scoreboard import ScoreBoard
 
 
 CELL_COLOR_BASE = "gray"
@@ -25,7 +26,7 @@ class GameScreen():
         "advanced": (16, 30, 99)
     }
 
-    def __init__(self, root, difficulty: str, create_start_callback):
+    def __init__(self, root, difficulty: str, scoreboard: ScoreBoard):
         self.release_ui()
 
         self.root: tk.Tk = root
@@ -48,8 +49,10 @@ class GameScreen():
         # parameters
         self._font_size = int(self.minesweeper_grid.cell_pixel_size * 0.6)
         self._font = ("Arial", self._font_size)
-        self._return_start_callback = create_start_callback
         self._on_game = True
+        self._difficulty = difficulty
+
+        self.scoreboard: ScoreBoard = scoreboard
 
         self._create_ui_elements()
 
@@ -218,37 +221,18 @@ class GameScreen():
 
 
     def _finalize_game(self, game_status: str):
-        self._on_game = False
         self.timer.stop()
-        if game_status == "lost":
-            self.message_label.config(text="You lost! Game Over")
-            #self.show_popup("Game Over", "You lost! Better luck next time.")
-        elif game_status == "won":
+        self._on_game = False
+        won = (game_status == "won")
+        
+        # Update the scoreboard
+        self.scoreboard.update_statistics(self._difficulty, won=won)
+
+        # Check for high score and update if necessary
+        if won:
+            time_elapsed = self.timer.get_elapsed_time()
+            self.scoreboard.update_high_scores(self._difficulty, time=int(time_elapsed))
             self.message_label.config(text="Congratulations!, You won the game!")
-            #self.show_popup("Congratulations!", "You won the game!")
-
-
-    # def show_popup(self, title: str, message: str):
-    #     if self._popup_displayed:
-    #         return
-
-    #     self._popup_displayed = True
-    #     popup = tk.Toplevel(self.root)
-    #     popup.title(title)
-    #     popup.geometry("200x100")
-
-    #     # Make the popup modal and disable the GameScreen
-    #     popup.grab_set()
-
-    #     label = tk.Label(popup, text=message)
-    #     label.pack(pady=10)
-
-    #     ok_button = tk.Button(popup, text="OK", command=lambda: self.close_popup(popup))
-    #     ok_button.pack(pady=5)
-
-
-    # def close_popup(self, popup):
-    #     popup.destroy()
-    #     self._popup_displayed = False
-    #     self.release_ui()
-    #     self._return_start_callback()
+        else:
+            # game_status == "lost":
+            self.message_label.config(text="You lost! Game Over")

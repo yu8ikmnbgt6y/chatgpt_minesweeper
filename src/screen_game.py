@@ -9,7 +9,7 @@ from scoreboard import ScoreBoard
 
 
 CELL_COLOR_BASE = "gray"
-CELL_COLOR_OPEND = "white"
+CELL_COLOR_OPENED = "white"
 CELL_COLOR_MINE = "black"
 
 def has_attr_and_not_none(obj, attr_name):
@@ -112,7 +112,7 @@ class GameScreen():
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill="red", outline="gray")
                 self.canvas.create_text(center_x, center_y, text="B", fill="white", font=self._font)
             else:
-                self.canvas.create_rectangle(x1, y1, x2, y2, fill=CELL_COLOR_OPEND, outline="gray")
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill=CELL_COLOR_OPENED, outline="gray")
                 if cell.adjacent_mines > 0:
                     color = self.ADJACENT_MINES_COLORS[cell.adjacent_mines]
                     self.canvas.create_text(center_x, center_y, text=str(cell.adjacent_mines), fill=color, font=self._font)

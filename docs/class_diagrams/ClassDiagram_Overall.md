@@ -1,30 +1,25 @@
 ```mermaid
 classDiagram
-    class Cell
-    class Interface
-    class MinesweeperGrid
-    class ScoreBoard
-    class GameScreen
-    class Menu
-    class StartScreen
-    class Timer
-    class GameStatisticsWindow
+    Cell
+    Interface
+    MinesweeperGrid
+    ScoreBoard
+    GameScreen
+    Menu
+    StartScreen
+    Timer
+    GameStatisticsWindow
 
-    Interface --> StartScreen
-    Interface --> GameScreen
-    Interface --> Menu
-    Interface --> GameStatisticsWindow
-    Interface --> ScoreBoard
-    
-    StartScreen --> Interface
-    GameScreen --> Interface
-    Menu --> Interface
-    GameStatisticsWindow --> Interface
-    ScoreBoard --> Interface
-    
-    GameScreen --> MinesweeperGrid
-    GameScreen --> Timer
-    GameScreen --> ScoreBoard
-    
+    Interface *-- Menu
+    Interface *-- StartScreen
+    Interface *-- GameScreen
+    Interface *-- GameStatisticsWindow
+    Interface *-- ScoreBoard
+
+    GameScreen *-- MinesweeperGrid
+    GameScreen *-- Timer
+
     MinesweeperGrid *-- Cell
+
+    GameStatisticsWindow *-- ScoreBoard
 ```

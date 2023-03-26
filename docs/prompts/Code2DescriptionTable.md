@@ -16,14 +16,14 @@ The description of each item is as follows
 * "Access":
   Describes which Access Specifier the member corresponds to. It will be "Public" or "Private" in Python code.
 * "Member Type":
-	Describes whether the member is a "Method", "Variable", or "Property".
+	Describes whether the member is a "Method", "Attribute" or "Property".
 	When the Method is decorated as @classmethod add "/class" after the "Method".
 	When the Method is decorated as @staticmethod add "/static" after the "Method".
 * "DataType":
   * DataType of the member.
   * Describe what Datatype is returned when the member is called.
   * If the member is a method or property, this item means the return value's DataType.
-  * If the member is a variable, this item means the member's own DataType.
+  * If the member is a attribute, this item means the member's own DataType.
 * "Description":
   * Description of the member.
   * The length of this item depends on the importance of the member.

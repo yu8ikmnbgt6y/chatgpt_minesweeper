@@ -1,6 +1,6 @@
 
 # ClassDiagram
-Please make the Class Diagram for our Minesweeper game implementation we discussed until now.
+Please make the Class Diagram for our implementation we discussed until now.
 The Class diagram you will make have all the classes the application has.
 So, it will be the overall view of the application.
 
@@ -9,6 +9,7 @@ Markdown, Mermaid
 
 ## Classes
 Output Class diagram must include these classes
+#####含むべきクラスを列挙する以下は例#######
 * "Cell"
 * "Interface"
 * "MinesweeperGrid"
@@ -26,18 +27,15 @@ Just depict class boxes and relate them.
 
 ## Relationship
 There are types of relationship between classes like below.
-When you relate classes use their relationship representation.
+When relating classes, use a relational expression such as the one below.
 
-| Classification | Relationship | Mermaid Representation |
-| --- | --- | --- |
-| Class Structure | Inheritance | ```classDiagram A <|-- B``` |
-| Class Structure | Aggregation | ```classDiagram A o-- B``` |
-| Class Structure | Composition | ```classDiagram A *-- B``` |
-| Class Structure | Association | ```classDiagram A -- B``` |
-| Class Structure | Instantiation | ```classDiagram A --> B``` |
-| Class Interaction | Dependency | ```classDiagram A ..> B``` |
-| Class Interaction | Realization | ```classDiagram A <|.. B``` |
-| Multiplicity | Multiplicity | ```classDiagram A "1" -- "1..*" B``` |
-| Multiplicity | Selectivity | ```classDiagram A "1" -- "0..1" B``` |
-| Multiplicity | Dependency | ```classDiagram A "1" ..> "1..*" B``` |
-| Multiplicity | Application | ```classDiagram A "1" --> "*" B``` |
+| Relationship | Mermaid Representation |
+| --- | --- |
+| Inheritance | ``` A <|-- B``` |
+| Aggregation | ``` A o-- B``` |
+| Composition | ``` A *-- B``` |
+| Association | ``` A --> B``` |
+| Link | ``` A -- B``` |
+| Dependency | ``` A ..> B``` |
+| Realization | ``` A ..|> B``` |
+| Multiplicity | ```eg.) A "1" -- "1..*" B``` |

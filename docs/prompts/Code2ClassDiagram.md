@@ -1,5 +1,5 @@
 # ClassDiagram
-Please create a class diagram from the code field below.
+Please create a class diagram from the ##CODE field below.
 You may also use information obtained during the discussion.
 The output of this class diagram must focus on a single class.
 The class of interest is specified in the ##Class field.
@@ -9,15 +9,15 @@ Markdown, Mermaid
 
 ## Class
 Output Class diagram must include this class
-* "StartScreen"
+* #####クラスの名前#####
 
 ## Include
-* all members the class of interest have.
+* All members of the class of interest.
 * Classes the class of interest relates directly.
-* Classes which is not the class of interest does not have information of members.
+* Classes which is not the class of interest should not have information on their members.
 
 ## Exclude
-* Classes the class of interest does not relate directly.
+* Classes that are not directly related to the class of interest.
 
 
 ## CODE

@@ -37,23 +37,9 @@ def assume_tokens_from_messages(messages, model="gpt-3.5-turbo-0301"):
     return num_tokens
 
 class ChatMessages:
-    def __init__(self, max_tokens: int, model: str):
-        self._max_tokens = max_tokens
-        # Messages are stored to fit within max_token or less.
-        # When actually sent, the message is truncated to meet the max_token, including the system message which is added to the end of the message.
+    def __init__(self):
         self._messages = []   
         self._system_message = ""
-        self._model: str = model
-
-    @property
-    def max_tokens(self):
-        return self._max_tokens
-
-    @max_tokens.setter
-    def max_tokens(self, value):
-        if value < 1:
-            raise ValueError("Max tokens must be greater than 0.")
-        self._max_tokens = value
 
     @staticmethod
     def _validate_message_structure(message: Dict):
@@ -68,7 +54,6 @@ class ChatMessages:
 
         if self._validate_message_structure(message=message):
             self._messages.append(message)
-            self._truncate_self_messages()        
     
     def get_latest_assistant_message_if_exists(self):
         if self._messages:
@@ -78,19 +63,30 @@ class ChatMessages:
         return       
 
     
-    def create_sending_messages(self, system_message: str):
-        self._truncate_self_messages()
+    def create_sending_messages(self, model: str, max_tokens: int, system_message: str):
+        self._truncate_self_messages(model=model, max_tokens=max_tokens)
+
         messages = self._messages.copy()
         messages.append({"role":"system", "content":system_message})
 
-        truncated_messages = self.truncate_messages_to_max_tokens(messages=messages, max_tokens=self.max_tokens, model=self._model)
+        truncated_messages = self.truncate_messages_to_max_tokens(
+            messages=messages,
+            max_tokens=max_tokens,
+            model=model
+            )
         return truncated_messages
       
-    def create_system_message(self, persona: str, game_status, mines_locations: List[Cell], false_flagged_cells: List[Cell], progression_rate: float):
+    def create_system_message(self, game_status, mines_locations: List[Cell], false_flagged_cells: List[Cell], progression_rate: float, chat_settings: Dict):
         mines_locations_string = ",".join(mines_locations)
         false_flagged_cells_string = ",".join(false_flagged_cells)
 
-        message = f"You are {persona}, reply user based on your persona. You must always reply in the same language as the language spoken."
+        persona = chat_settings["persona"]
+        character = chat_settings["character"]
+        relationship = chat_settings["relationship"]
+
+        message = \
+        f"Setup: you are {persona}, you have a {character} disposition and your relationship with the user is {relationship}. Reply to the user based on the above settings. Replies must always be in the same language as the language you are speaking."
+
 
         # self._system_message = \
         # f"""The User is playing the Minesweeper game. You are {persona} and watching the user is playing the game.
@@ -124,13 +120,17 @@ class ChatMessages:
         return messages
 
 
-    def _truncate_self_messages(self):
-        truncate_messages = self.truncate_messages_to_max_tokens(messages=self._messages, max_tokens=self.max_tokens, model=self._model)
+    def _truncate_self_messages(self, model: str, max_tokens: int):
+        truncate_messages = self.truncate_messages_to_max_tokens(
+            messages=self._messages,
+            max_tokens=max_tokens,
+            model=model
+            )
         self._messages = truncate_messages
         return
 
 
-    def send_message(self, openai_api, prompt):
+    def send_message(self, openai_api, prompt, chat_settings: Dict):
         """
         Sends a message to the OpenAI API and returns the response.
         Args:
@@ -139,14 +139,29 @@ class ChatMessages:
         Returns:
             The assistant's response as a string.
         """
+        model = chat_settings["model"]
+        max_tokens = chat_settings["max_tokens"]
+
         self._add_message(role="user", content=prompt)
-        system_message = self.create_system_message(persona="user's younger sister", game_status="",mines_locations=[], false_flagged_cells=[], progression_rate=0.0)
-        sending_messages = self.create_sending_messages(system_message=system_message)
+
+        system_message = self.create_system_message(
+            game_status="",
+            mines_locations=[],
+            false_flagged_cells=[],
+            progression_rate=0.0,
+            chat_settings=chat_settings
+        )
+
+        sending_messages = self.create_sending_messages(
+            model=model,
+            max_tokens=max_tokens,
+            system_message=system_message
+            )
 
         response = openai_api.ChatCompletion.create(
-            model=self._model,
+            model=model,
             messages=sending_messages,
-            max_tokens=self.max_tokens,
+            max_tokens=max_tokens,
             n=1,
             stop=None,
             temperature=0.7,

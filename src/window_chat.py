@@ -32,10 +32,7 @@ class ChatWindow:
         openai.api_key = self.api_key
 
         self.settings_window = ChatSettingsWindow(root=self.root)
-        self.message_manager = ChatMessages(
-            max_tokens=self.settings_window.max_tokens,
-            model=self.settings_window.model
-            )
+        self.message_manager = ChatMessages()
         self._create_ui()
         
         
@@ -81,7 +78,11 @@ class ChatWindow:
         
         try:
             ans = ""
-            gpt_res = self.message_manager.send_message(openai_api=openai, prompt=user_text)
+            gpt_res = self.message_manager.send_message(
+                openai_api=openai,
+                prompt=user_text,
+                chat_settings=self.settings_window.get_settings()
+                )
             ans = gpt_res
         except AuthenticationError as e:
             print("Authentication error:", e)

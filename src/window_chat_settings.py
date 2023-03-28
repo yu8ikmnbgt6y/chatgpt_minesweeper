@@ -61,6 +61,10 @@ class  ChatSettingsWindow:
     @property
     def persona(self):
         return str(self.settings["persona"])
+    
+    @property
+    def relationship(self):
+        return str(self.settings["relationship"])
 
     
     @property
@@ -90,7 +94,15 @@ class  ChatSettingsWindow:
         frame_option_relationship_settings  .grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
         frame_option_save_button            .grid(row=5, column=1, padx=10, pady=10, sticky="nsew")
 
-
+    def get_settings(self):
+        return {
+            "model": self.model,
+            "max_tokens": self.max_tokens,
+            "character": self.character,
+            "persona": self.persona,
+            "relationship": self.relationship
+        }
+    
     def _create_frame_option_model(self):
         frame = tk.Frame(self._chat_settings_window)
 

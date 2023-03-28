@@ -32,13 +32,13 @@ class Interface:
             self.root.grid_rowconfigure(i, weight=1)
             self.root.grid_columnconfigure(i, weight=1)
 
+        self.chat_app = None
         self.chat_button = tk.Button(self.root, text="Launch Chat", command=self._launch_chat_window)
         self.chat_button.grid(row=3, column=1, sticky='nsew')
 
         self._create_start_screen()
         self._launch_chat_window()
-    
-   
+       
     def _create_menu(self):
         callback_method_dict = {
             "difficulty": self._create_game_screen,
@@ -65,7 +65,13 @@ class Interface:
     
     def _create_game_screen(self, difficulty: str):
         self._release_screens()
-        self.game_screen = GameScreen(root=self.root, difficulty=difficulty, scoreboard=self.scoreboard)
+        
+        self.game_screen = GameScreen(
+            root=self.root,
+            difficulty=difficulty,
+            scoreboard=self.scoreboard,
+            chat_app=self.chat_app
+            )
 
     def _show_statistics(self):
         self.game_statistics_window.show_statistics(self.scoreboard)

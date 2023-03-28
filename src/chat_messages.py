@@ -38,8 +38,7 @@ def assume_tokens_from_messages(messages, model="gpt-3.5-turbo-0301"):
 
 class ChatMessages:
     def __init__(self):
-        self._messages = []   
-        self._system_message = ""
+        self._messages = []
 
     @staticmethod
     def _validate_message_structure(message: Dict):
@@ -76,38 +75,47 @@ class ChatMessages:
             )
         return truncated_messages
       
-    def create_system_message(self, game_status, mines_locations: List[Cell], false_flagged_cells: List[Cell], progression_rate: float, chat_settings: Dict):
-        mines_locations_string = ",".join(mines_locations)
-        false_flagged_cells_string = ",".join(false_flagged_cells)
+    def create_system_message(self, game_status_dict: Dict, chat_settings_dict: Dict):
+        persona = chat_settings_dict["persona"]
+        character = chat_settings_dict["character"]
+        relationship = chat_settings_dict["relationship"]
 
-        persona = chat_settings["persona"]
-        character = chat_settings["character"]
-        relationship = chat_settings["relationship"]
+        message = ""
 
-        message = \
-        f"Setup: you are {persona}, you have a {character} disposition and your relationship with the user is {relationship}. Reply to the user based on the above settings. Replies must always be in the same language as the language you are speaking."
+        if game_status_dict != {}:
+            game_status = game_status_dict["game_status"]
+            mines_remaining: List[Cell] = game_status_dict["mines_remaining"]
+            false_flagged_cells: List[Cell] = game_status_dict["false_flagged_cells"]
+            progression_rate: float = game_status_dict["progression_rate"]
+            mines_remaining_string = ",".join([str(x) for x in mines_remaining])
+            false_flagged_cells_string = ",".join([str(x) for x in false_flagged_cells])
+
+            message = \
+            f"""The User is playing the Minesweeper game. You are {persona} and watching the user is playing the game.
+            You must play a role as a {persona}. Do and say things appropriate to your persona.
+            The current status of the game will be communicated in a later section ##GameStatus.
+            Based on your character, if GAMESTATUS is "won", congratulate the user; if it "lose", comfort him as.
+            If GAMESTATUS is "ongoing" or "starting", encourage the user based on your persona and the situation explained in the ##GameStatus section.
+            If user ask you to tell where the mines are located, the strict persona will never tell it. On the contrary, they will be angry with you for the fact that user asked you to tell it.
+            However, a persona with a weak personality, a kind persona, or a persona with a weakness toward the user may tell you.
+            Your relationship with the user, as inferred from the conversation, is also important.
+            Any persona may teach it if the persona is persuaded to do so by the conversation the persona have had with them. 
+            However, the difficulty a user has in convincing a persona depends on the nature of that persona.
+            When a user is not specifically talking about a game, there is no need to specifically mention the game. Converse with the user according to the flow of the conversation and your persona.
+            You must always reply in the same language as the language spoken.
+                    
+            # GameStatus
+            GAMESTATUS: {game_status}
+            Location of mines: {mines_remaining_string}
+            Cells that are incorrectly flagged by the user: {false_flagged_cells_string}
+            Rate of Progression: {progression_rate}
+            """
+            
+        else:
+            message = \
+            f"Setup: you are {persona}, you have a {character} disposition and your relationship with the user is {relationship}. Reply to the user based on the above settings. Replies must always be in the same language as the language you are speaking."
 
 
-        # self._system_message = \
-        # f"""The User is playing the Minesweeper game. You are {persona} and watching the user is playing the game.
-        # You must play a role as a {persona}. Do and say things appropriate to your persona.
-        # The current status of the game will be communicated in a later section ##GameStatus.
-        # Based on your character, if GAMESTATUS is "won", congratulate the user; if it "lose", comfort him as.
-        # If GAMESTATUS is "ongoing" or "starting", encourage the user based on your persona and the situation explained in the ##GameStatus section.
-        # If user ask you to tell where the mines are located, the strict persona will never tell it. On the contrary, they will be angry with you for the fact that user asked you to tell it.
-        # However, a persona with a weak personality, a kind persona, or a persona with a weakness toward the user may tell you.
-        # Your relationship with the user, as inferred from the conversation, is also important.
-        # Any persona may teach it if the persona is persuaded to do so by the conversation the persona have had with them. 
-        # However, the difficulty a user has in convincing a persona depends on the nature of that persona.
-        # When a user is not specifically talking about a game, there is no need to specifically mention the game. Converse with the user according to the flow of the conversation and your persona.
-        # You must always reply in the same language as the language spoken.
-        
-        # # GameStatus
-        # GAMESTATUS: {game_status}
-        # Location of mines: {mines_locations_string}
-        # Cells that are incorrectly flagged by the user: {false_flagged_cells_string}
-        # Rate of Progression: {progression_rate}
-        # """
         return message
 
     @staticmethod
@@ -130,7 +138,7 @@ class ChatMessages:
         return
 
 
-    def send_message(self, openai_api, prompt, chat_settings: Dict):
+    def send_message(self, openai_api, prompt, game_status_dict: Dict, chat_settings_dict: Dict):
         """
         Sends a message to the OpenAI API and returns the response.
         Args:
@@ -139,17 +147,15 @@ class ChatMessages:
         Returns:
             The assistant's response as a string.
         """
-        model = chat_settings["model"]
-        max_tokens = chat_settings["max_tokens"]
+        model = chat_settings_dict["model"]
+        max_tokens = chat_settings_dict["max_tokens"]
 
-        self._add_message(role="user", content=prompt)
+        if prompt:
+            self._add_message(role="user", content=prompt)
 
         system_message = self.create_system_message(
-            game_status="",
-            mines_locations=[],
-            false_flagged_cells=[],
-            progression_rate=0.0,
-            chat_settings=chat_settings
+            game_status_dict=game_status_dict,
+            chat_settings_dict=chat_settings_dict
         )
 
         sending_messages = self.create_sending_messages(

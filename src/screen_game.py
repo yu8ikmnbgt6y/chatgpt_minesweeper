@@ -6,7 +6,7 @@ from minesweeper_grid import MinesweeperGrid, TooManyFlagsError, UnavailableCell
 from timer import Timer
 from cell import Cell
 from scoreboard import ScoreBoard
-
+from window_chat import ChatWindow
 
 CELL_COLOR_BASE = "gray"
 CELL_COLOR_OPENED = "white"
@@ -26,7 +26,7 @@ class GameScreen():
         "advanced": (16, 30, 99)
     }
 
-    def __init__(self, root, difficulty: str, scoreboard: ScoreBoard):
+    def __init__(self, root, difficulty: str, scoreboard: ScoreBoard, chat_app:ChatWindow):
         self.release_ui()
 
         self.root: tk.Tk = root
@@ -45,6 +45,8 @@ class GameScreen():
         self.minesweeper_grid = MinesweeperGrid(rows=rows, cols=cols, mines=mines)
 
         self.timer = Timer()
+
+        self.chat_app = chat_app
 
         # parameters
         self._font_size = int(self.minesweeper_grid.cell_pixel_size * 0.6)
@@ -150,6 +152,7 @@ class GameScreen():
             #print("skip")
             return
         
+        
         #print(f"grid {row}, {col}")
         #print(self.minesweeper_grid)
        
@@ -159,7 +162,11 @@ class GameScreen():
             self.draw_cell(cell)
 
         self._update_screen()
-        game_status = self.minesweeper_grid.check_game_status()
+        
+        game_status_dict: Dict = self.minesweeper_grid.create_game_status()
+        self.chat_app.send_message_from_game_screen(game_status_dict=game_status_dict)
+
+        game_status = game_status_dict["game_status"]
         if not game_status == "ongoing":
             self._finalize_game(game_status=game_status)
         
@@ -210,7 +217,7 @@ class GameScreen():
         self.draw_cell(cell=cell)
         self._update_screen()
 
-        game_status = self.minesweeper_grid.check_game_status()
+        game_status = self.minesweeper_grid._check_game_status()
         if not game_status == "ongoing":
             self._finalize_game(game_status=game_status)
 

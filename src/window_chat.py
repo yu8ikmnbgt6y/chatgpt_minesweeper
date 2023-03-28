@@ -1,5 +1,6 @@
 import os
 import tkinter as tk
+from typing import Dict
 from tkinter import messagebox
 import openai
 from openai.error import AuthenticationError
@@ -68,6 +69,29 @@ class ChatWindow:
         _frame.grid(row=0,column=0)
 
     
+    def send_message_from_game_screen(self, game_status_dict: Dict):
+
+        try:
+            ans = ""
+            gpt_res = self.message_manager.send_message(
+                openai_api=openai,
+                game_status_dict=game_status_dict,
+                prompt="",
+                chat_settings_dict=self.settings_window.get_settings()
+                )
+            ans = gpt_res
+        except AuthenticationError as e:
+            print("Authentication error:", e)
+            ans = "Failed to get a response. Please check if the API key is valid."
+        except Exception as e:
+            print("Error:", e)
+            ans = "Failed to get a response. Please try again."
+        finally:
+            self.chat_history.insert(tk.END, f"\nChatGPT: ", 'gpt')
+            self.chat_history.insert(tk.END, ans, 'gpt')
+
+        pass
+
 
     def handle_input(self, event=None):
         user_text = self.input_text.get("1.0", tk.END).strip()
@@ -83,8 +107,9 @@ class ChatWindow:
             ans = ""
             gpt_res = self.message_manager.send_message(
                 openai_api=openai,
+                game_status_dict={},
                 prompt=user_text,
-                chat_settings=self.settings_window.get_settings()
+                chat_settings_dict=self.settings_window.get_settings()
                 )
             ans = gpt_res
         except AuthenticationError as e:

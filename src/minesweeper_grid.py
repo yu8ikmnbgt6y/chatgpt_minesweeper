@@ -1,7 +1,9 @@
 import random
 from collections import deque
-from typing import List, Tuple, Dict
+from typing import Dict, List, Tuple
+
 from cell import Cell
+
 
 class TooManyFlagsError(Exception):
     def __init__(self, message="", extra_info=None):

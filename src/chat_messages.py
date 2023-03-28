@@ -1,7 +1,10 @@
-from tiktoken import get_encoding, encoding_for_model
-from typing import List, Dict
-from cell import Cell
 import copy
+from typing import Dict, List
+
+from tiktoken import encoding_for_model, get_encoding
+
+from cell import Cell
+
 
 def assume_tokens_from_messages(messages, model="gpt-3.5-turbo-0301"):
     """Returns the number of tokens used by a list of messages."""

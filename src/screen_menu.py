@@ -1,5 +1,6 @@
 import tkinter as tk
 
+
 class Menu:
     def __init__(self, root, callback_method_dict):
         self._root = root

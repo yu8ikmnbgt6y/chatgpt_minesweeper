@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from typing import List
-from scoreboard import ScoreBoard, DIFFICULTIES, HighScore, MAX_HIGH_SCORE_ROW
+
+from scoreboard import DIFFICULTIES, MAX_HIGH_SCORE_ROW, HighScore, ScoreBoard
+
 
 class GameStatisticsWindow:
     def __init__(self, root):

@@ -1,12 +1,13 @@
 import os
 import tkinter as tk
-from typing import Dict
 from tkinter import messagebox
+from typing import Dict
+
 import openai
 from openai.error import AuthenticationError
-from window_chat_settings import ChatSettingsWindow, CHAT_BOARD_BG_COLOR
-from chat_messages import ChatMessages
 
+from chat_messages import ChatMessages
+from window_chat_settings import CHAT_BOARD_BG_COLOR, ChatSettingsWindow
 
 CHAT_FONT_FAMILY = "Helvetica"
 CHAT_FONT_SIZE = 12
@@ -90,7 +91,7 @@ class ChatWindow:
             self.chat_history.insert(tk.END, ans, 'gpt')
 
 
-    def send_message_from_game_screen(self, game_status_dict: Dict):
+    async def send_message_from_game_screen_async(self, game_status_dict: Dict):
         self.send_message(
             game_status_dict=game_status_dict,
             user_prompt=""

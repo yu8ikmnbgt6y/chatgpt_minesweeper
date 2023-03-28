@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 
+
 class StartScreen():
     def __init__(self, root, create_game_callback):
         self._root: tk.Tk = root

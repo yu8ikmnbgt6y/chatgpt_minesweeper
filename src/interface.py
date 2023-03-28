@@ -1,16 +1,20 @@
+import asyncio
 import tkinter as tk
-from screen_start import StartScreen
-from screen_game import GameScreen
-from window_game_statistics import GameStatisticsWindow
-from screen_menu import Menu
+
 from scoreboard import ScoreBoard
+from screen_game import GameScreen, TkinterAsyncEventLoop
+from screen_menu import Menu
+from screen_start import StartScreen
 from window_chat import ChatWindow
+from window_game_statistics import GameStatisticsWindow
 
 
 class Interface:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("MinesweeperGame")
+        event_loop = TkinterAsyncEventLoop(self.root)
+        asyncio.set_event_loop(event_loop)
         
         self.start_screen = None
         self.game_screen = None
@@ -38,6 +42,7 @@ class Interface:
 
         self._create_start_screen()
         self._launch_chat_window()
+        event_loop.run_forever()
        
     def _create_menu(self):
         callback_method_dict = {

@@ -1,11 +1,14 @@
-from datetime import datetime
+import asyncio
 import tkinter as tk
-from typing import Dict, Tuple, Callable
-from datetime import timedelta
-from minesweeper_grid import MinesweeperGrid, TooManyFlagsError, UnavailableCellError
-from timer import Timer
+from datetime import datetime, timedelta
+from functools import partial
+from typing import Callable, Dict, Tuple
+
 from cell import Cell
+from minesweeper_grid import (MinesweeperGrid, TooManyFlagsError,
+                              UnavailableCellError)
 from scoreboard import ScoreBoard
+from timer import Timer
 from window_chat import ChatWindow
 
 CELL_COLOR_BASE = "gray"
@@ -14,6 +17,49 @@ CELL_COLOR_MINE = "black"
 
 def has_attr_and_not_none(obj, attr_name):
     return hasattr(obj, attr_name) and getattr(obj, attr_name) is not None
+
+class TkinterAsyncEventLoop(asyncio.AbstractEventLoop):
+    def __init__(self, root):
+        self.root = root
+        self._ready = []
+        self._stopping = False
+
+    def run_forever(self):
+        while not self._stopping:
+            self.root.update()
+            while self._ready:
+                self._ready.pop(0)()
+
+    def stop(self):
+        self._stopping = True
+
+    def create_task(self, coro):
+        def wrapped_coro():
+            try:
+                coro.send(None)
+            except StopIteration:
+                pass
+            else:
+                self._ready.append(wrapped_coro)
+        self._ready.append(wrapped_coro)
+
+    def call_soon(self, callback, *args):
+        self._ready.append(lambda: callback(*args))
+
+    def call_later(self, delay, callback, *args):
+        self.root.after(int(delay * 1000), lambda: self.call_soon(callback, *args))
+
+    def call_at(self, when, callback, *args):
+        now = self.time()
+        delay = when - now
+        return self.call_later(delay, callback, *args)
+
+    def time(self):
+        return self.root.tk.call('after', 'info')
+
+    def run_in_executor(self, executor, func, *args, **kwargs):
+        return asyncio.wrap_future(executor.submit(func, *args, **kwargs))
+
 
 class GameScreen():
     ADJACENT_MINES_COLORS = {1: "blue", 2: "green", 3: "red", 4: "dark blue",
@@ -52,6 +98,7 @@ class GameScreen():
         self._font_size = int(self.minesweeper_grid.cell_pixel_size * 0.6)
         self._font = ("Arial", self._font_size)
         self._on_game = True
+        self._message_count = 0
         self._difficulty = difficulty
 
         self.scoreboard: ScoreBoard = scoreboard
@@ -124,13 +171,14 @@ class GameScreen():
             else:
                 self.canvas.create_rectangle(x1, y1, x2, y2, fill=CELL_COLOR_BASE, outline="black")
 
-
     def _safe_get_clicked_cell(self, event) -> Tuple[bool, int, int]:
         col = event.x // self.minesweeper_grid.cell_pixel_size
         row = event.y // self.minesweeper_grid.cell_pixel_size
         in_range = (0 <= col < self.minesweeper_grid.n_cols) and (0 <= row < self.minesweeper_grid.n_rows)
         return in_range, row, col
 
+    async def send_message_from_game_screen_async(self, game_status_dict):
+        await self.chat_app.send_message_from_game_screen_async(game_status_dict=game_status_dict)
 
     def handle_left_click(self, event):
         #print("left button clicked")
@@ -149,12 +197,7 @@ class GameScreen():
 
         cell: Cell = self.minesweeper_grid.cells[row][col]
         if cell.is_flagged or cell.is_open:  # if the cell has been already flagged or opened, do nothing.
-            #print("skip")
             return
-        
-        
-        #print(f"grid {row}, {col}")
-        #print(self.minesweeper_grid)
        
         mine_hit, opened_cells = self.minesweeper_grid.open_cell(row, col)
 
@@ -164,10 +207,19 @@ class GameScreen():
         self._update_screen()
         
         game_status_dict: Dict = self.minesweeper_grid.create_game_status()
-        self.chat_app.send_message_from_game_screen(game_status_dict=game_status_dict)
 
         game_status = game_status_dict["game_status"]
-        if not game_status == "ongoing":
+
+        if game_status == "ongoing":
+            self._message_count += 1
+            if self._message_count % 10 == 1:
+                asyncio.get_event_loop().create_task(
+                    self.send_message_from_game_screen_async(game_status_dict=game_status_dict)
+                    )
+        else:
+            asyncio.get_event_loop().create_task(
+                self.send_message_from_game_screen_async(game_status_dict=game_status_dict)
+                )
             self._finalize_game(game_status=game_status)
         
     def update_timer(self):

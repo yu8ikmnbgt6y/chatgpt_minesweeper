@@ -37,7 +37,9 @@ class ChatWindow:
         
         
     def _create_ui(self):
-        frame = tk.Frame(self.root, bg='gray')
+        _frame = tk.Frame(self.root)
+
+        frame = tk.Frame(_frame, bg='gray')
         frame.pack(padx=10, pady=10)
 
         scrollbar = tk.Scrollbar(frame)
@@ -55,14 +57,15 @@ class ChatWindow:
                 self.handle_input()
                 return "break"
             
-        self.input_text = tk.Text(self.root, height=4, width=50, bg='white', fg='gray')
+        self.input_text = tk.Text(_frame, height=4, width=50, bg='white', fg='gray')
         self.input_text.pack(padx=10, pady=(0, 10))
         self.input_text.bind("<Return>", self.handle_input)
         self.input_text.bind("<Shift-Return>", lambda event: self.input_text.insert(tk.INSERT, '\n'))
         self.input_text.bind("<KeyPress-Return>", handle_return)
 
-        settings_button = tk.Button(self.root, text="Settings", command=self.settings_window.show_chat_settings_window)
+        settings_button = tk.Button(_frame, text="Settings", command=self.settings_window.show_chat_settings_window)
         settings_button.pack(padx=(0, 10), pady=(0, 10), side=tk.RIGHT)
+        _frame.grid(row=0,column=0)
 
     
 

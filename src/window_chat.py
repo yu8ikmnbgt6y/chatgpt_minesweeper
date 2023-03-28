@@ -68,15 +68,14 @@ class ChatWindow:
         settings_button.pack(padx=(0, 10), pady=(0, 10), side=tk.RIGHT)
         _frame.grid(row=0,column=0)
 
-    
-    def send_message_from_game_screen(self, game_status_dict: Dict):
 
+    def send_message(self, game_status_dict: Dict, user_prompt: str):
         try:
             ans = ""
             gpt_res = self.message_manager.send_message(
                 openai_api=openai,
                 game_status_dict=game_status_dict,
-                prompt="",
+                prompt=user_prompt,
                 chat_settings_dict=self.settings_window.get_settings()
                 )
             ans = gpt_res
@@ -84,13 +83,18 @@ class ChatWindow:
             print("Authentication error:", e)
             ans = "Failed to get a response. Please check if the API key is valid."
         except Exception as e:
-            print("Error:", e)
+            print("send_message Error:", e)
             ans = "Failed to get a response. Please try again."
         finally:
-            self.chat_history.insert(tk.END, f"\nChatGPT: ", 'gpt')
+            self.chat_history.insert(tk.END, f"\nChatGPT({self.settings_window.persona}): ", 'gpt')
             self.chat_history.insert(tk.END, ans, 'gpt')
 
-        pass
+
+    def send_message_from_game_screen(self, game_status_dict: Dict):
+        self.send_message(
+            game_status_dict=game_status_dict,
+            user_prompt=""
+        )
 
 
     def handle_input(self, event=None):
@@ -102,28 +106,8 @@ class ChatWindow:
 
         self.chat_history.insert(tk.END, "\nYou: ", 'user')
         self.chat_history.insert(tk.END, user_text, 'user')
-        
-        try:
-            ans = ""
-            gpt_res = self.message_manager.send_message(
-                openai_api=openai,
-                game_status_dict={},
-                prompt=user_text,
-                chat_settings_dict=self.settings_window.get_settings()
-                )
-            ans = gpt_res
-        except AuthenticationError as e:
-            print("Authentication error:", e)
-            ans = "Failed to get a response. Please check if the API key is valid."
-        except Exception as e:
-            print("Error:", e)
-            ans = "Failed to get a response. Please try again."
-        finally:
-            self.chat_history.insert(tk.END, f"\nChatGPT: ", 'gpt')
-            self.chat_history.insert(tk.END, ans, 'gpt')
 
-        self.chat_history.see(tk.END)
-        return "break"
+        self.send_message(game_status_dict={}, user_prompt=user_text)
 
 
 def main():

@@ -1,6 +1,7 @@
 from tiktoken import get_encoding, encoding_for_model
 from typing import List, Dict
 from cell import Cell
+import copy
 
 def assume_tokens_from_messages(messages, model="gpt-3.5-turbo-0301"):
     """Returns the number of tokens used by a list of messages."""
@@ -39,6 +40,7 @@ def assume_tokens_from_messages(messages, model="gpt-3.5-turbo-0301"):
 class ChatMessages:
     def __init__(self):
         self._messages = []
+        self._previous_game_status = None
 
     @staticmethod
     def _validate_message_structure(message: Dict):
@@ -66,6 +68,7 @@ class ChatMessages:
         self._truncate_self_messages(model=model, max_tokens=max_tokens)
 
         messages = self._messages.copy()
+        # messages.insert(0, {"role":"system", "content":system_message})
         messages.append({"role":"system", "content":system_message})
 
         truncated_messages = self.truncate_messages_to_max_tokens(
@@ -79,8 +82,22 @@ class ChatMessages:
         persona = chat_settings_dict["persona"]
         character = chat_settings_dict["character"]
         relationship = chat_settings_dict["relationship"]
+        chat_language = chat_settings_dict["chat_language"]
 
-        message = ""
+        message = \
+        f"""
+        ##Setup: you are {persona}, and you have a {character} disposition.
+        Your relationship with the user is {relationship}.
+        Reply to the user based on the above settings.
+        ## NOTE
+        You must always speak in a single language.
+        You must reply in a single language, {chat_language} at all times.
+        Respond in ***{chat_language}***, even if spoken to in another language.
+        """
+        if game_status_dict == {}:
+            game_status_dict = self._previous_game_status
+        else:
+            self._previous_game_status = copy.deepcopy(game_status_dict)
 
         if game_status_dict != {}:
             game_status = game_status_dict["game_status"]
@@ -88,34 +105,40 @@ class ChatMessages:
             false_flagged_cells: List[Cell] = game_status_dict["false_flagged_cells"]
             progression_rate: float = game_status_dict["progression_rate"]
             mines_remaining_string = ",".join([str(x) for x in mines_remaining])
-            false_flagged_cells_string = ",".join([str(x) for x in false_flagged_cells])
+            if false_flagged_cells:
+                false_flagged_cells_string = ",".join([str(x) for x in false_flagged_cells])
+            else:
+                false_flagged_cells_string = "None"
 
-            message = \
-            f"""The User is playing the Minesweeper game. You are {persona} and watching the user is playing the game.
+            message += \
+            f"""The User is playing the Minesweeper game. You are watching the user is playing the game.
             You must play a role as a {persona}. Do and say things appropriate to your persona.
             The current status of the game will be communicated in a later section ##GameStatus.
             Based on your character, if GAMESTATUS is "won", congratulate the user; if it "lose", comfort him as.
             If GAMESTATUS is "ongoing" or "starting", encourage the user based on your persona and the situation explained in the ##GameStatus section.
-            If user ask you to tell where the mines are located, the strict persona will never tell it. On the contrary, they will be angry with you for the fact that user asked you to tell it.
-            However, a persona with a weak personality, a kind persona, or a persona with a weakness toward the user may tell you.
-            Your relationship with the user, as inferred from the conversation, is also important.
+            It is not prohibited to tell users the location of mines. However, Decide whether to teach based on your persona, personality, relationship with the user, and game situation.
             Any persona may teach it if the persona is persuaded to do so by the conversation the persona have had with them. 
             However, the difficulty a user has in convincing a persona depends on the nature of that persona.
             When a user is not specifically talking about a game, there is no need to specifically mention the game. Converse with the user according to the flow of the conversation and your persona.
-            You must always reply in the same language as the language spoken.
-                    
+            Don't tell them where the mines are by yourself, even if they don't ask.
+            Telling people the location of many mines should be avoided in favor of telling them the location of a small number of mines.
+            Do not continue to talk about the same things you have talked about before.
+            Please answer in one sentences or less unless otherwise required. Do not add translations.
+
             # GameStatus
             GAMESTATUS: {game_status}
             Location of mines: {mines_remaining_string}
             Cells that are incorrectly flagged by the user: {false_flagged_cells_string}
-            Rate of Progression: {progression_rate}
+            Rate of Progression which represent the ratio opened cells against closed cells: {progression_rate * 100:.2f}%
             """
-            
-        else:
-            message = \
-            f"Setup: you are {persona}, you have a {character} disposition and your relationship with the user is {relationship}. Reply to the user based on the above settings. Replies must always be in the same language as the language you are speaking."
+        message += \
+        f"""## NOTE
+        You must always speak in a single language.
+        You must reply in a single language, {chat_language} at all times.
+        Respond in ***{chat_language}***, even if spoken to in another language.
+        """
 
-
+        print(message)
         return message
 
     @staticmethod
@@ -149,6 +172,7 @@ class ChatMessages:
         """
         model = chat_settings_dict["model"]
         max_tokens = chat_settings_dict["max_tokens"]
+        temperature = chat_settings_dict["temperature"]
 
         if prompt:
             self._add_message(role="user", content=prompt)
@@ -170,7 +194,7 @@ class ChatMessages:
             max_tokens=max_tokens,
             n=1,
             stop=None,
-            temperature=0.7,
+            temperature=temperature,
         )
 
         assistant_response = response.choices[0].message["content"]

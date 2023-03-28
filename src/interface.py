@@ -78,13 +78,13 @@ class Interface:
 
     def _launch_chat_window(self):
         if not hasattr(self, "chat_app") or self.chat_app is None:
-            chat_window_root = tk.Toplevel(self.root)
-            chat_window_root.title("ChatGPT")
+            self.chat_window_root = tk.Toplevel(self.root)
+            self.chat_window_root.title("ChatGPT")
             main_window_x, main_window_y = self.root.winfo_x(), self.root.winfo_y()
-            chat_window_root.geometry(f"+{main_window_x + 400}+{main_window_y + 50}")
+            self.chat_window_root.geometry(f"+{main_window_x + 400}+{main_window_y + 50}")
         
-            self.chat_app = ChatWindow(chat_window_root)
-            chat_window_root.protocol("WM_DELETE_WINDOW", self._close_chat_window)
+            self.chat_app = ChatWindow(self.chat_window_root)
+            self.chat_window_root.protocol("WM_DELETE_WINDOW", self._close_chat_window)
         else:
             self.chat_app.root.focus()
     

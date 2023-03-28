@@ -1,8 +1,7 @@
 import asyncio
 import tkinter as tk
-from datetime import datetime, timedelta
-from functools import partial
-from typing import Callable, Dict, Tuple
+from datetime import timedelta
+from typing import Dict, Tuple
 
 from cell import Cell
 from minesweeper_grid import (MinesweeperGrid, TooManyFlagsError,

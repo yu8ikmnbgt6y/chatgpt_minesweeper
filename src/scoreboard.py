@@ -1,5 +1,4 @@
 import json
-import os
 import sys
 from collections import defaultdict, namedtuple
 from datetime import datetime

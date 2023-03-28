@@ -66,3 +66,6 @@ class Cell:
 
     def put_mine(self):
         self._is_mine = True
+    
+    def __str__(self):
+        return f"({self._row},{self._col})"

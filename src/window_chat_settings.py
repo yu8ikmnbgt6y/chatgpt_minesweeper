@@ -15,7 +15,9 @@ DEFAULT_SETTINGS = {
     "persona": "father",
     "persona_candidates": ["father", "mother", "teacher"],
     "character": "friendly",
-    "character_candidates": ["friendly", "strict", "funny", "wise"]
+    "character_candidates": ["friendly", "strict", "funny", "wise"],
+    "relationship": "Friendly",
+    "relationship_candidates": ["Intimate", "Friendly", "Hostile", "Neutral", "Respectful"]
 }
 
 MODEL_OPTIONS = [
@@ -78,14 +80,15 @@ class  ChatSettingsWindow:
         frame_option_max_tokens = self._create_frame_option_max_tokens()
         frame_option_persona_settings = self._create_frame_option_persona_settings()
         frame_option_character_settings = self._create_frame_option_character_settings()
+        frame_option_relationship_settings = self._create_frame_option_relationship_settings()
         frame_option_save_button = self._create_frame_option_save_button()
-        
 
-        frame_option_model.grid             (row=0, column=0, padx=10, pady=10, sticky="nsew")
-        frame_option_max_tokens.grid        (row=1, column=0, padx=10, pady=10, sticky="nsew")
-        frame_option_persona_settings.grid  (row=2, column=0, padx=10, pady=10, sticky="nsew")
-        frame_option_character_settings.grid(row=3, column=0, padx=10, pady=10, sticky="nsew")
-        frame_option_save_button.grid       (row=4, column=0, padx=10, pady=10, sticky="nsew")
+        frame_option_model                  .grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        frame_option_max_tokens             .grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        frame_option_persona_settings       .grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+        frame_option_character_settings     .grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
+        frame_option_relationship_settings  .grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
+        frame_option_save_button            .grid(row=5, column=1, padx=10, pady=10, sticky="nsew")
 
 
     def _create_frame_option_model(self):
@@ -143,9 +146,22 @@ class  ChatSettingsWindow:
         persona_option_menu.pack()
         return frame
 
+    def _create_frame_option_relationship_settings(self):
+        frame = tk.Frame(self._chat_settings_window)
+
+        self.relationship_var = tk.StringVar()
+        self.relationship_var.set(self.settings['relationship'])
+        relationship_options = self.settings['relationship_candidates']
+
+        relationship_option_label = tk.Label(frame, text="Relationship:")
+        relationship_option_label.pack()
+        relationship_option_menu = tk.OptionMenu(frame, self.relationship_var, *relationship_options)
+        relationship_option_menu.pack()
+        return frame
+
     def _create_frame_option_save_button(self):
         frame = tk.Frame(self._chat_settings_window)
-        setting_save_button = tk.Button(frame, text="Save", command=self.save_settings)
+        setting_save_button = tk.Button(frame, text="Save", command=self.save_settings, width=10, height=3)
         setting_save_button.pack()
 
         return frame
@@ -164,6 +180,7 @@ class  ChatSettingsWindow:
             return
 
         self.settings['model'] = self.model_var.get()
+        self.settings["persona"] = self.persona_var.get()
         self.settings['character'] = self.character_var.get()
-
+        self.settings['relationship'] = self.relationship_var.get()
         save_settings(self.settings)

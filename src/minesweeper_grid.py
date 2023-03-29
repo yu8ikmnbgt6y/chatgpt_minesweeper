@@ -1,7 +1,9 @@
 import random
 from collections import deque
-from typing import List, Tuple
+from typing import Dict, List, Tuple
+
 from cell import Cell
+
 
 class TooManyFlagsError(Exception):
     def __init__(self, message="", extra_info=None):
@@ -23,6 +25,10 @@ class MinesweeperGrid:
         self.cell_pixel_size = CELL_SIZE
         self.cells = [[Cell(row=row, col=col, cell_size=self.cell_pixel_size) for col in range(cols)] for row in range(rows)]
         self.initialized = False
+        self._min_locations: List[Cell] = None
+        self._false_flagged_cells = set()
+        self._n_opened_cells = 0
+        self._total_non_mine_cells = (rows * cols) - mines
     
     @property
     def grid_width(self):
@@ -32,15 +38,26 @@ class MinesweeperGrid:
     def grid_height(self):
         return self.cell_pixel_size * self.n_rows
     
-    # @property
-    # def mines_remaining(self):
-    #     flagged_cells = sum(a_cell.is_flagged for cells_row in self.cells for a_cell in cells_row)
-    #     return self.n_mines - flagged_cells
+    @property
+    def mines_remaining(self) -> List[Cell]:
+        return [cell for cell in self._mine_locations if not cell.is_flagged]
+
+    @property
+    def mines_locations(self) -> List[Cell]:
+        return self._mine_locations
+
+    @property
+    def false_flagged_cells(self) -> List[Cell]:
+        return list(self._false_flagged_cells)
 
     @property
     def n_flagged(self):
         flagged_cells = sum(a_cell.is_flagged for cells_row in self.cells for a_cell in cells_row)
         return flagged_cells
+    
+    @property
+    def progression_rate(self) -> float:
+        return self._n_opened_cells / self._total_non_mine_cells
 
 
     def in_bounds(self, row: int, col: int) -> bool:
@@ -59,6 +76,7 @@ class MinesweeperGrid:
             if not (row == exclude_row and col == exclude_col) and not self.cells[row][col].is_mine:
                 self.cells[row][col].put_mine()
                 mines_placed += 1
+        self._mine_locations = [cell for row in self.cells for cell in row if cell.is_mine]
 
     def setup_adjacent_mines(self):
         for row in range(self.n_rows):
@@ -104,6 +122,10 @@ class MinesweeperGrid:
                         if this_cell.adjacent_mines == 0 and this_cell not in queue:
                             queue.append(this_cell)
 
+        for cell in opened_cells:
+            if not (cell.is_mine or cell.is_flagged):
+                self._n_opened_cells += 1
+
         return mine_hit, opened_cells
 
     def flag_cell(self, row: int, col: int) -> Cell:
@@ -114,9 +136,15 @@ class MinesweeperGrid:
             # Raise error if setting more mines than allowed. No error when toggling flagged cells.
             raise TooManyFlagsError('Too many flags')
         cell.toggle_flag()
+
+        if cell.is_flagged and not cell.is_mine:
+            self._false_flagged_cells.add(cell)
+        else:
+            self._false_flagged_cells.discard(cell)
+
         return cell
 
-    def check_game_status(self) -> str:
+    def _check_game_status(self) -> str:
 
         any_mine_cell_opened = any(
             cell.is_open for row in self.cells for cell in row if cell.is_mine
@@ -135,6 +163,16 @@ class MinesweeperGrid:
             return "won"
 
         return "ongoing"
+    
+    def create_game_status(self) -> Dict:
+        ret_dict: Dict = {}
+        ret_dict["game_status"] = self._check_game_status()
+
+        ret_dict["mines_remaining"]: List[Cell] = self.mines_remaining
+        ret_dict["false_flagged_cells"] :List[Cell] = self.false_flagged_cells
+        ret_dict["progression_rate"]: float = self.progression_rate
+
+        return ret_dict
     
     def print_opened_cells(self):
         grid_representation = ""

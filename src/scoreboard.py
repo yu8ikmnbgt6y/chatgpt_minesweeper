@@ -1,9 +1,8 @@
-import sys
 import json
-from typing import Dict, List, Tuple
+import sys
+from collections import defaultdict, namedtuple
 from datetime import datetime
-from collections import namedtuple, defaultdict
-
+from typing import Dict, List, Tuple
 
 HighScore = namedtuple("HighScore", ["rank", "clear_time", "clear_date"])
 DIFFICULTIES = ("beginner", "intermediate", "advanced")

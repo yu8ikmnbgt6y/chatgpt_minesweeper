@@ -176,6 +176,9 @@ class GameScreen():
         in_range = (0 <= col < self.minesweeper_grid.n_cols) and (0 <= row < self.minesweeper_grid.n_rows)
         return in_range, row, col
 
+    async def update_game_status_on_message_async(self, game_status_dict: Dict):
+        await self.chat_app.update_game_status_on_message_async(game_status_dict=game_status_dict)
+
     async def send_message_from_game_screen_async(self, game_status_dict):
         await self.chat_app.send_message_from_game_screen_async(game_status_dict=game_status_dict)
 
@@ -215,6 +218,10 @@ class GameScreen():
                 asyncio.get_event_loop().create_task(
                     self.send_message_from_game_screen_async(game_status_dict=game_status_dict)
                     )
+            else:
+                asyncio.get_event_loop().create_task(
+                    self.update_game_status_on_message_async(game_status_dict=game_status_dict)
+                )
         else:
             asyncio.get_event_loop().create_task(
                 self.send_message_from_game_screen_async(game_status_dict=game_status_dict)
@@ -268,10 +275,15 @@ class GameScreen():
         self.draw_cell(cell=cell)
         self._update_screen()
 
-        game_status = self.minesweeper_grid._check_game_status()
-        if not game_status == "ongoing":
-            self._finalize_game(game_status=game_status)
+        game_status_dict: Dict = self.minesweeper_grid.create_game_status()
+        game_status = game_status_dict["game_status"]
 
+        if game_status == "ongoing":                
+            asyncio.get_event_loop().create_task(
+                self.update_game_status_on_message_async(game_status_dict=game_status_dict)
+            )
+        else:
+            self._finalize_game(game_status=game_status)
 
     def _update_screen(self):
         self.score_label.config(text=f"Mine: {self.minesweeper_grid.n_mines}")

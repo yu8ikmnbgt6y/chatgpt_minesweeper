@@ -163,6 +163,8 @@ class ChatMessages:
         self._messages = truncate_messages
         return
 
+    def set_game_status(self, game_status_dict: Dict):
+        self._previous_game_status = game_status_dict.copy()
 
     def send_message(self, openai_api, prompt, game_status_dict: Dict, chat_settings_dict: Dict):
         """

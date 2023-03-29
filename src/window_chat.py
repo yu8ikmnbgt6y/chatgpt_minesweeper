@@ -89,6 +89,9 @@ class ChatWindow:
             self.chat_history.insert(tk.END, f"\nChatGPT({self.settings_window.persona}): ", 'gpt')
             self.chat_history.insert(tk.END, ans, 'gpt')
 
+    async def update_game_status_on_message_async(self, game_status_dict: Dict):
+        self.message_manager.set_game_status(game_status_dict)
+        
 
     async def send_message_from_game_screen_async(self, game_status_dict: Dict):
         self.send_message(

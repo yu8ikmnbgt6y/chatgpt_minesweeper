@@ -6,7 +6,7 @@ command to launch this app
 cp open-ai-key_template.txt open-ai-key.txt
 <Write OpenAI API key at oepn-ai-key.txt>
 
-pip instll -r requirements.txt
+pip install -r requirements.txt
 python main.py
 ```
 

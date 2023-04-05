@@ -4,7 +4,7 @@ this minesweeper application was developed with chatgpt4
 command to launch this app
 ```
 cp open-ai-key_template.txt open-ai-key.txt
-<Write OpenAI API key at oepn-ai-key.txt>
+<Write OpenAI API key at open-ai-key.txt>
 
 pip install -r requirements.txt
 python main.py

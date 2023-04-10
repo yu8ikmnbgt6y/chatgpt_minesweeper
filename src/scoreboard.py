@@ -73,10 +73,17 @@ class ScoreBoard:
                     for row in highscores[difficulty]:
                         _high_score = HighScore(*row)
                         self._high_scores[difficulty].append(_high_score)
-                pass
+
+                    if "game_played" not in self._statistics[difficulty]:
+                        self._statistics[difficulty]["game_played"] = 0
+                    if "game_won" not in self._statistics[difficulty]:
+                        self._statistics[difficulty]["game_won"] = 0
         except Exception as e:
-            # print(e)
             # set default values
             self._statistics = defaultdict(lambda: defaultdict(int))
             self._high_scores = defaultdict(list)
+
+            for difficulty in DIFFICULTIES:
+                self._statistics[difficulty]["game_played"] = 0
+                self._statistics[difficulty]["game_won"] = 0
         return
